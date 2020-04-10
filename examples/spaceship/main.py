@@ -5,7 +5,7 @@ sys.path.append(sys.path[0] + "/../..") # cause main.py is two directories away 
 
 
 import clingine
-from engine import player_obj, asteroid, button
+from engine import player_obj, asteroid, button, star
 from pynput import keyboard
 
 class GameWindow(clingine.window.Window):
@@ -13,17 +13,23 @@ class GameWindow(clingine.window.Window):
 		super().__init__(*args, **kwargs)
 
 		self.title = clingine.label.Label(window=self, text="< == SPACE == >", x=self.width // 2, y=15, anchor="center")
-		buttons_text = ["PLAY", "HELP", "QUIT"]
+		self.help = clingine.label.Label(window=self, text="Arrow Keys - Controls | Shift - Boost | Space - Shoot",
+			x=self.width // 2, y=self.height - 10, anchor="center")
+		buttons_text = ["PLAY", "QUIT"]
 		self.buttons = [button.Button(window=self, text=txt, x=self.width // 2, y=20 + idx, anchor="center") 
 			for idx, txt in enumerate(buttons_text)]
 		self.buttons[0].active = True
 		self.player = player_obj.Player(window=self, x=self.width // 2, y=self.height - 4, direction=(0, 0), speed=(2, 1), 
-			image=clingine.util.load_image("resources/spaceship.txt"))
-		asteroid_img = clingine.util.load_image("resources/obstacles.txt")
-		self.asteroids = [asteroid.Asteroid(window=self, x=random.randrange(1, self.width - 1 - asteroid_img.width), 
-			y=random.randrange(-asteroid_img.height - 20, -asteroid_img.height),
-			direction=(0, 1), speed=(0, 1), image=asteroid_img) for i in range(4)]
+			images=clingine.util.load_images("resources/spaceship/"))
+		asteroid_imgs = clingine.util.load_images("resources/asteroid/")
+		self.asteroids = [asteroid.Asteroid(window=self, x=random.randrange(1, self.width - 1 - asteroid_imgs[0].width), 
+			y=random.randrange(-asteroid_imgs[0].height - 40, -asteroid_imgs[0].height),
+			direction=(0, 1), speed=(0, 1), images=asteroid_imgs) for i in range(7)]
 		self.score = clingine.label.Label(window=self, text="SCORE: {}".format(self.player.score), x=0, y=self.height - 2)
+
+		self.stars = [star.Star(window=self, x=random.randrange(0, self.width - 1), 
+			y=random.randrange(self.height - 1),
+			direction=(0, 1), speed=(0, 1)) for i in range(20)]
 
 		self.cursor = 0
 
@@ -50,10 +56,6 @@ class GameWindow(clingine.window.Window):
 				self.cursor = 0
 				self.player.score = 0
 				self.buttons[self.cursor].active_help = False
-
-			if (key == "space" or key == "enter") and "HELP" in self.buttons[self.cursor].text:
-				self.buttons[self.cursor].active_help = not self.buttons[self.cursor].active_help
-				self.buttons[self.cursor].toggle_help()
 
 			if (key == "space" or key == "enter") and "QUIT" in self.buttons[self.cursor].text:
 				self.exit()
@@ -98,8 +100,12 @@ class GameWindow(clingine.window.Window):
 			self.score.text = "SCORE: {}".format(self.player.score)
 			self.score.update()
 			self.score.render()
+			for star in self.stars:
+				star.update()
+				star.render()
 			if self.player.state == "dead":
 				self.title.render()
+				self.help.render()
 				for btn in self.buttons:
 					btn.update()
 					btn.render()
@@ -111,6 +117,7 @@ class GameWindow(clingine.window.Window):
 					if self.player.state == "dead":
 						self.reset()
 						break
+					ast.animate(loop=True, rate=2)
 					ast.render()
 
 			self.draw(stdscr)

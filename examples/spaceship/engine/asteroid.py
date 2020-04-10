@@ -5,7 +5,7 @@ class Asteroid(clingine.sprite.Sprite):
 		super().__init__(*args, **kwargs)
 		
 	def reset(self):
-		self.y = random.randrange(-self.height - 20, -self.height)
+		self.y = random.randrange(-self.height - 40, -self.height)
 		self.x = random.randrange(1, self.window.width - 1 - self.width)
 
 	def check_bounds(self):

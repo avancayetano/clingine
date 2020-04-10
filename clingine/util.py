@@ -1,4 +1,4 @@
-import curses
+import curses, os
 class Image:
 	def __init__(self, value, source, width, height):
 		self.value = value
@@ -27,5 +27,12 @@ def load_image(source):
 			if len(line) - 1 > width:
 				width = len(line) - 1 
 			val.append(line.rstrip("\n"))
+	val = tuple(val)
 	img = Image(val, source, width, height)
 	return img
+
+def load_images(source):
+	imgs = []
+	for file in os.listdir(source):
+		imgs.append(load_image("{}/{}".format(source, file)))
+	return imgs
