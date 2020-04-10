@@ -11,19 +11,32 @@ class Window:
 		self.running = True
 
 		self.fps = fps
-		self.clock = 0
+		self.clock = time.time()
 		
 		self.reset()
 
 		self.key_listener = pynput.keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
+		self.pressed_keys = set()
+		self.released_keys = set()
 		self.key_listener.start()
 
 
 	def on_press(self, key):
-		pass
+		try:
+			key = key.char
+		except:
+			key = key.name
+		self.pressed_keys.add(key)
+		if key in self.released_keys:
+			self.released_keys.remove(key)
 
 	def on_release(self, key):
-		pass
+		try:
+			key = key.char
+		except:
+			key = key.name
+		self.released_keys.add(key)
+		self.pressed_keys.remove(key)
 
 	def start(self, func):
 		curses.wrapper(func)
@@ -44,6 +57,7 @@ class Window:
 
 
 	def tick(self, fps):
+		self.clock = time.time()
 		time.sleep(1 / fps)
 
 	def exit(self):

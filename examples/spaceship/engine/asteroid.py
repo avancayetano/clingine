@@ -1,10 +1,14 @@
-import clingine, random
+import clingine, random, time
 
 class Asteroid(clingine.sprite.Sprite):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
+		self.init_health = 2
+		self.health = self.init_health
 		
 	def reset(self):
+		self.health = self.init_health
+		self.unrender()
 		self.y = random.randrange(-self.height - 40, -self.height)
 		self.x = random.randrange(1, self.window.width - 1 - self.width)
 
@@ -17,3 +21,5 @@ class Asteroid(clingine.sprite.Sprite):
 			for ast in self.window.asteroids:
 				ast.reset()
 			self.window.player.reset()
+			time.sleep(1)
+

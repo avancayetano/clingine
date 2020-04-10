@@ -23,13 +23,13 @@ class Sprite:
 	def unrender(self):
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
-				if self.image[y][x] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
+				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
 					self.window.screen[int(self.y) + y][int(self.x) + x] = self.window.char
 
 	def render(self):
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
-				if self.image[y][x] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
+				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
 					self.window.screen[int(self.y) + y][int(self.x) + x] = self.image[y][x]
 
 	def update(self):
