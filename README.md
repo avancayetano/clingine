@@ -7,7 +7,7 @@ CLIngine is a Python game engine for developing command line interface (CLI) gam
 ![gameplay](screenshots/gameplay.png?raw=true "gameplay")
 
 # HOW TO USE:
-Just clone this repo and copy the pyclig directory to your project, then import it.
+Just clone this repo and copy the clingine directory to your project, then import it.
 I don't know how to publish this package and I'm too lazy to learn.
 
 ## TO DO:
