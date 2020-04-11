@@ -11,15 +11,8 @@ Just clone this repo and copy the pyclig directory to your project, then import 
 I don't know how to publish this package and I'm too lazy to learn.
 
 ## TO DO:
-1 More shapes
-2 Shapes colors
-3 Sprite properties
-4 Custom colors
-5 Try: key listeners 
-6 Windows compatibility using Unicurses
-7 Try double buffer
-
-## FIX:
-1 Variable image widths of a sprite
-2 Decide how to handle transparent parts of an img
-3 Stop terminal keyboard input while playing
+* More shapes
+* Windows os compatibility using Unicurses
+* Add double buffer mode
+* Color system
+	* Shapes colors, sprite properties, custom colors

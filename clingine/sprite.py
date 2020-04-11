@@ -23,14 +23,14 @@ class Sprite:
 	def unrender(self):
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
-				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen[int(self.y) + y][int(self.x) + x] = self.window.char
+				if self.image[y][x][0] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.char, None]
 
 	def render(self):
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
-				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen[int(self.y) + y][int(self.x) + x] = self.image[y][x]
+				if self.image[y][x][0] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.image[y][x], None]
 
 	def update(self):
 		self.unrender()
@@ -45,6 +45,7 @@ class Sprite:
 		if self.animate_count == rate:
 			if self.image_num == len(self.images):
 				self.image_num = 0
+			self.unrender()
 			self.source = self.images[self.image_num].source
 			self.width = self.images[self.image_num].width
 			self.height = self.images[self.image_num].height

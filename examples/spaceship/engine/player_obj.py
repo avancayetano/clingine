@@ -1,4 +1,4 @@
-import clingine
+import clingine, curses
 class Player(clingine.sprite.Sprite):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -58,6 +58,7 @@ class Bullet(clingine.shapes.Rect):
 			collided_asteroid.health -= 1
 			if collided_asteroid.health == 0:
 				collided_asteroid.reset()
+			self.unrender()
 			self.window.player.bullets.remove(self)
 
 		elif self.y < 0:

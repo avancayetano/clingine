@@ -83,13 +83,10 @@ class GameWindow(clingine.window.Window):
 			self.buttons[self.cursor].update()
 
 
-	def run(self, stdscr):
-		self.fill(stdscr, "black")
+	def run(self):
+		self.fill("black")
 		while self.running:
 			self.handle_key_events()
-			self.score.text = "SCORE: {}".format(self.player.score)
-			self.score.update()
-			self.score.render()
 			for star in self.stars:
 				star.update()
 				star.render()
@@ -100,9 +97,6 @@ class GameWindow(clingine.window.Window):
 					btn.update()
 					btn.render()
 			else:
-				self.bullets_left.text = "BULLETS LEFT: {}".format(self.player.bullets_count)
-				self.bullets_left.update()
-				self.bullets_left.render()
 				self.player.animate(loop=True, rate=1)
 				self.player.update()
 				self.player.render()
@@ -116,14 +110,18 @@ class GameWindow(clingine.window.Window):
 						break
 					ast.animate(loop=True, rate=2)
 					ast.render()
-
-			self.draw(stdscr)
-			stdscr.refresh()
+				self.bullets_left.text = "BULLETS LEFT: {}".format(self.player.bullets_count)
+				self.bullets_left.update()
+				self.bullets_left.render()
+			self.score.text = "SCORE: {}".format(self.player.score)
+			self.score.update()
+			self.score.render()
+			self.update()
 			self.tick(self.fps)
 
 		return
 			
 
 if __name__ == "__main__":
-	window = GameWindow(width=130, height=50, char=" ", fps=60)
-	window.start(window.run)
+	window = GameWindow(width=130, height=50, fps=60)
+	window.start()

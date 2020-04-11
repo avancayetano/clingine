@@ -2,23 +2,13 @@ import os, time, sys, curses, pynput
 from . import label, shapes, util
 
 class Window:
-	def __init__(self, width=80, height=22, char=" ", fps=30):
+	def __init__(self, width=80, height=22, char=" ", fps=60):
 		sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=height, cols=width)) # changes terminal dimensions
-		print() # this print is necessary; we need to print something to update the terminal dimensions
+		print() # this print is necessary; we need to print something to update the terminal dimensions after executing the line above
 		self.width = width
 		self.height = height
 		self.char = char
-		self.running = True
-
 		self.fps = fps
-		self.clock = time.time()
-		
-		self.reset()
-
-		self.key_listener = pynput.keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
-		self.pressed_keys = set()
-		self.released_keys = set()
-		self.key_listener.start()
 
 
 	def on_press(self, key):
@@ -38,20 +28,38 @@ class Window:
 		self.released_keys.add(key)
 		self.pressed_keys.remove(key)
 
-	def start(self, func):
-		curses.wrapper(func)
+	def start(self):
+		try:
+			self.screen = curses.initscr()
+			curses.start_color()
+			curses.noecho()
+			curses.cbreak()
+			self.screen.nodelay(True)
+			self.screen.keypad(True)
+			self.running = True
+			self.clock = time.time()
+			self.key_listener = pynput.keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
+			self.pressed_keys = set()
+			self.released_keys = set()
+			self.key_listener.start()
+			self.reset()
+			self.run() # the main game loop
+			self.exit()
 
-	def fill(self, stdscr, color):
-	    curses.init_pair(1, curses.COLOR_WHITE, util.colors.get(color, curses.COLOR_BLACK))
-	    stdscr.bkgd(self.char, curses.color_pair(1) | curses.A_BOLD)
+		except:
+			self.exit()
+
+	def fill(self, color):
+		curses.init_pair(1, curses.COLOR_WHITE, util.colors.get(color, curses.COLOR_BLACK))
+		self.screen.bkgd(self.char, curses.color_pair(1))
 
 	def reset(self):
-		self.screen = []
+		self.screen_array = [] # 2D array of arrays, each with two values, char and color_pair
 		for i in range(self.height):
-			self.screen.append([self.char for j in range(self.width)])
+			self.screen_array.append([[self.char, None] for j in range(self.width)])
 
 	
-	def run(self, stdscr):
+	def run(self):
 		# your game logic here...
 		pass
 
@@ -62,14 +70,23 @@ class Window:
 
 	def exit(self):
 		self.running = False
+		curses.nocbreak()
+		self.screen.keypad(False)
+		curses.echo()
+		curses.endwin()
 
-
-	def draw(self, stdscr):
+	def update(self):
+		self.screen.getch() # this is necessary so that the keys you inputted while playing wont echo in the terminal after you exit the game
 		for y in range(self.height):
 			for x in range(self.width):
 				if y != self.height - 1 and x != self.width - 1:
 					try:
-						stdscr.addch(y, x, self.screen[y][x], curses.color_pair(1) | curses.A_BOLD)
+						color_pair = self.screen_array[y][x][1]
+						if color_pair:
+							self.screen.addstr(y, x, self.screen_array[y][x][0], color_pair)
+						else:
+							self.screen.addstr(y, x, self.screen_array[y][x][0], curses.color_pair(1))
 					except:
-						# this happens when the terminal size is smaller than the self.screen size
-						stdscr.resize(self.height, self.width)
+						# this happens when the terminal size is smaller than the self.screen_array size
+						self.screen.resize(self.height, self.width)
+		self.screen.refresh()

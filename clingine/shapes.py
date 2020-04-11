@@ -1,6 +1,6 @@
 import clingine
 class Rect:
-	def __init__(self, window, x=0, y=0, width=1, height=1, direction=(0, 0), speed=(1, 1), char="*"):
+	def __init__(self, window, x=0, y=0, width=1, height=1, direction=(0, 0), speed=(1, 1), color_pair=None, char="*"):
 		# x, y is the top left position of Rect
 		self.window = window
 		self.x = x
@@ -10,7 +10,7 @@ class Rect:
 		self.direction = direction
 		self.speed = speed
 		self.char = char
-
+		self.color_pair = color_pair
 
 	def update(self):
 		self.unrender()
@@ -25,13 +25,13 @@ class Rect:
 		for y in range(self.height):
 			for x in range(self.width):
 				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen[int(self.y) + y][int(self.x) + x] = self.window.char
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.char, None]
 
 	def render(self):
 		for y in range(self.height):
 			for x in range(self.width):
 				if 0 <= int(self.x) + x <= self.window.width -1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen[int(self.y) + y][int(self.x) + x] = self.char
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.char, self.color_pair]
 
 	def check_group_collision(self, others):
 		for obj in others:
