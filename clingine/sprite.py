@@ -26,11 +26,11 @@ class Sprite:
 				if self.image[y][x][0] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
 					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.char, None]
 
-	def render(self):
+	def render(self, color_pair=None):
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
 				if self.image[y][x][0] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.image[y][x], None]
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.image[y][x], color_pair]
 
 	def update(self):
 		self.unrender()

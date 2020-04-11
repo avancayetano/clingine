@@ -16,3 +16,6 @@ I don't know how to publish this package and I'm too lazy to learn.
 * Add double buffer mode
 * Color system
 	* Shapes colors, sprite properties, custom colors
+
+### DOING:
+* Color system

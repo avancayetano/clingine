@@ -64,15 +64,15 @@ class GameWindow(clingine.window.Window):
 				self.cursor += 1
 				self.released_keys.remove("down")
 
-			if ("space" in self.pressed_keys) and "PLAY" in self.buttons[self.cursor].text:
+			if ("enter" in self.pressed_keys) and "PLAY" in self.buttons[self.cursor].text:
 				self.reset()
 				self.buttons[1].active_help = False
 				self.player.state = "alive"
 				self.cursor = 0
-				self.player.score = 0
+				self.player.reset()
 				self.buttons[self.cursor].active_help = False
 
-			if ("space" in self.pressed_keys) and "QUIT" in self.buttons[self.cursor].text:
+			if ("enter" in self.pressed_keys) and "QUIT" in self.buttons[self.cursor].text:
 				self.exit()
 
 			if self.cursor < 0:
@@ -84,38 +84,48 @@ class GameWindow(clingine.window.Window):
 
 
 	def run(self):
-		self.fill("black")
+		# the Colors and ColorPairs classes should each have only 1 instance
+		colors = clingine.util.Colors()
+		color_pairs = clingine.util.ColorPairs(colors)
+		red = (1000, 0, 0)
+		green = (0, 1000, 0)
+		blue = (0, 0, 1000)
+		black = (0, 0, 0)
+		white = (1000, 1000, 1000)
+		colors.add(red, green, blue, black, white)
+		color_pairs.add((white, black), (green, black), (red, black), (blue, black))
+		self.fill(color_pairs.get_color_pair((white, black)))
 		while self.running:
 			self.handle_key_events()
 			for star in self.stars:
 				star.update()
-				star.render()
+				star.render(color_pairs.get_color_pair((white, black)))
 			if self.player.state == "dead":
 				self.title.render()
 				self.help.render()
 				for btn in self.buttons:
 					btn.update()
-					btn.render()
+					btn.render(color_pairs.get_color_pair((green, black)))
 			else:
 				self.player.animate(loop=True, rate=1)
 				self.player.update()
-				self.player.render()
+				self.player.render(color_pairs.get_color_pair((blue, black)))
 				for bullet in self.player.bullets:
 					bullet.update()
-					bullet.render()
+					bullet.render(color_pairs.get_color_pair((white, black)))
 				for ast in self.asteroids:
 					ast.update()
 					if self.player.state == "dead":
 						self.reset()
 						break
 					ast.animate(loop=True, rate=2)
-					ast.render()
-				self.bullets_left.text = "BULLETS LEFT: {}".format(self.player.bullets_count)
-				self.bullets_left.update()
-				self.bullets_left.render()
+					ast.render(color_pairs.get_color_pair((red, black)))
+			self.bullets_left.text = "BULLETS LEFT: {}".format(self.player.bullets_count)
+			self.bullets_left.update()
+			self.bullets_left.render(color_pairs.get_color_pair((green, black)))
 			self.score.text = "SCORE: {}".format(self.player.score)
 			self.score.update()
-			self.score.render()
+			self.score.render(color_pairs.get_color_pair((green, black)))
 			self.update()
 			self.tick(self.fps)
 

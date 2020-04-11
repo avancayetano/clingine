@@ -34,6 +34,7 @@ class Window:
 			curses.start_color()
 			curses.noecho()
 			curses.cbreak()
+			curses.curs_set(0)
 			self.screen.nodelay(True)
 			self.screen.keypad(True)
 			self.running = True
@@ -46,12 +47,15 @@ class Window:
 			self.run() # the main game loop
 			self.exit()
 
-		except:
+		except Exception as e:
 			self.exit()
+			raise e
+			
 
-	def fill(self, color):
-		curses.init_pair(1, curses.COLOR_WHITE, util.colors.get(color, curses.COLOR_BLACK))
-		self.screen.bkgd(self.char, curses.color_pair(1))
+	def fill(self, color_pair):
+		# curses.init_pair(1, curses.COLOR_WHITE, util.DEFAULT_COLORS.get(color, curses.COLOR_BLACK))
+		# self.screen.bkgd(self.char, curses.color_pair(1) | curses.A_BOLD)
+		self.screen.bkgd(self.char, color_pair | curses.A_BOLD)
 
 	def reset(self):
 		self.screen_array = [] # 2D array of arrays, each with two values, char and color_pair
@@ -83,9 +87,9 @@ class Window:
 					try:
 						color_pair = self.screen_array[y][x][1]
 						if color_pair:
-							self.screen.addstr(y, x, self.screen_array[y][x][0], color_pair)
+							self.screen.addstr(y, x, self.screen_array[y][x][0], color_pair | curses.A_BOLD)
 						else:
-							self.screen.addstr(y, x, self.screen_array[y][x][0], curses.color_pair(1))
+							self.screen.addstr(y, x, self.screen_array[y][x][0], curses.color_pair(1) | curses.A_BOLD)
 					except:
 						# this happens when the terminal size is smaller than the self.screen_array size
 						self.screen.resize(self.height, self.width)

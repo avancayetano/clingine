@@ -20,6 +20,5 @@ class Asteroid(clingine.sprite.Sprite):
 			self.window.player.state = "dead"
 			for ast in self.window.asteroids:
 				ast.reset()
-			self.window.player.reset()
 			time.sleep(1)
 
