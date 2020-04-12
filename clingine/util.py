@@ -10,18 +10,18 @@ class Image:
 # rgb values range from 0 to 255
 class Colors:
 	def __init__(self):
-		self.custom_colors = {}
+		self.colors = {}
 
 	def add(self, *rgbs):
 		for rgb in rgbs:
 			color_number = self.generate_color_number()
-			self.custom_colors[rgb] = color_number
+			self.colors[rgb] = color_number
 			rgb = self.interpolate(rgb) # need to interpolate the input rgb values to values from 0 to 1000 so that curses can read them properly
 			curses.init_color(color_number, rgb[0], rgb[1], rgb[2])
 
 	def remove(self, *rgbs):
 		for rgb in rgbs:
-			del self.custom_colors[rgb]
+			del self.colors[rgb]
 
 	def interpolate(self, rgb):
 		interpolated = []
@@ -30,11 +30,9 @@ class Colors:
 			interpolated.append(x)
 		return tuple(interpolated)
 
-	def get_color_number(self, rgb):
-		return self.custom_colors[rgb]	
 
 	def generate_color_number(self):
-		nums = sorted([self.custom_colors[key] for key in self.custom_colors])
+		nums = sorted([self.colors[key] for key in self.colors])
 		if len(nums) == 0:
 			return 1
 		i = 0
@@ -42,12 +40,13 @@ class Colors:
 			if i + 1 != nums[i]:
 				return i + 1
 			i += 1
-		return i + 1
+		return (i + 1) % (curses.COLORS + 1)
 
 
 class ColorPairs:
-	def __init__(self, colors):
-		self.colors = colors
+	def __init__(self, window):
+		self.window = window
+		self.colors = Colors()
 		self.color_pairs = {}
 
 
@@ -55,7 +54,15 @@ class ColorPairs:
 		for rgb_pair in rgb_pairs:
 			color_pair_number = self.generate_color_pair_number()
 			self.color_pairs[rgb_pair] = color_pair_number
-			curses.init_pair(color_pair_number, self.colors.get_color_number(rgb_pair[0]), self.colors.get_color_number(rgb_pair[1]))
+			fg_color_number = self.colors.colors.get(rgb_pair[0], False)
+			bg_color_number = self.colors.colors.get(rgb_pair[1], False)
+			if not fg_color_number:
+				self.colors.add(rgb_pair[0])
+				fg_color_number = self.colors.colors[rgb_pair[0]]
+			if not bg_color_number:
+				self.colors.add(rgb_pair[1])
+				bg_color_number = self.colors.colors[rgb_pair[1]]
+			curses.init_pair(color_pair_number, fg_color_number, bg_color_number)
 
 	def remove(self, *rgb_pairs):
 		for rgb_pair in rgb_pairs:
@@ -70,13 +77,21 @@ class ColorPairs:
 			if i + 1 != nums[i]:
 				return i + 1
 			i += 1
-		return i + 1
-
-	def get_color_pair_number(self, rgb_pair):
-		return self.color_pairs[rgb_pair]
+		return (i + 1) % (curses.COLOR_PAIRS)
 
 	def get_color_pair(self, rgb_pair):
-		return curses.color_pair(self.get_color_pair_number(rgb_pair))
+		rgb_pair_buffer = []
+		for i in rgb_pair:
+			if not i:
+				rgb_pair_buffer.append(self.window.background_color)
+			else:
+				rgb_pair_buffer.append(i)
+		rgb_pair = tuple(rgb_pair_buffer)
+		color_pair_number = self.color_pairs.get(rgb_pair, False)
+		if not color_pair_number:
+			self.add(rgb_pair)
+			color_pair_number = self.color_pairs[rgb_pair]
+		return curses.color_pair(color_pair_number)
 
 
 def load_image(source):

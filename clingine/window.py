@@ -10,6 +10,9 @@ class Window:
 		self.char = char
 		self.fps = fps
 
+		self.color_pairs = util.ColorPairs(self)
+		self.background_color = (0, 0, 0)
+
 
 	def on_press(self, key):
 		try:
@@ -53,6 +56,8 @@ class Window:
 			
 
 	def fill(self, color_pair):
+		self.background_color = color_pair[1]
+		color_pair = self.color_pairs.get_color_pair(color_pair)
 		self.screen.bkgd(self.char, color_pair)
 
 	def reset(self):
@@ -87,9 +92,9 @@ class Window:
 						if self.screen_array[y][x][0]: # if that particular point is updated...
 							color_pair = self.screen_array[y][x][2]
 							if color_pair:
-								self.screen.addstr(y, x, self.screen_array[y][x][1], color_pair)
+								self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(color_pair))
 							else:
-								self.screen.addstr(y, x, self.screen_array[y][x][1], curses.color_pair(1))
+								self.screen.addstr(y, x, self.screen_array[y][x][1], curses.color_pair(0))
 						self.screen_array[y][x][0] = False
 					except:
 						# this happens when the terminal size is smaller than the self.screen_array size

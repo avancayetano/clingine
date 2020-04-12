@@ -1,11 +1,13 @@
 import clingine
 class Sprite:
-	def __init__(self, window, x=0, y=0, direction=(0, 0), speed=(1, 1), images=[], image_num=0):
+	def __init__(self, window, x=0, y=0, direction=(0, 0), speed=(1, 1), images=[], image_num=0, color_pair=None):
 		self.window = window
 		self.x = x
 		self.y = y
 		self.direction = direction
 		self.speed = speed
+
+		self.color_pair = color_pair
 
 		self.images = images
 		self.image_num = image_num
@@ -26,11 +28,11 @@ class Sprite:
 				if self.image[y][x][0] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
 					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.screen_array[int(self.y) + y][int(self.x) + x] != self.window.char, self.window.char, None]
 
-	def render(self, color_pair=None):
+	def render(self):
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
 				if self.image[y][x][0] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.screen_array[int(self.y) + y][int(self.x) + x] != self.image[y][x], self.image[y][x], color_pair]
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.screen_array[int(self.y) + y][int(self.x) + x] != self.image[y][x], self.image[y][x], self.color_pair]
 
 	def update(self):
 		self.unrender()

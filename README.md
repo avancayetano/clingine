@@ -23,6 +23,4 @@ I don't know how to publish this package and I'm too lazy to learn.
 
 
 ### DOING:
-* Color system
-	* simplify
-	* handle overflow
+* Multiline Label

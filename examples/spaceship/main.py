@@ -11,27 +11,27 @@ class GameWindow(clingine.window.Window):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
-		self.title = clingine.label.Label(window=self, text="< == SPACE == >", x=self.width // 2, y=15, anchor="center")
+		self.title = clingine.label.Label(window=self, text="< == SPACE == >", x=self.width // 2, y=15, anchor="center", color_pair=((0, 255, 0), (0, 0, 255)))
 		self.help = clingine.label.Label(window=self, text="Arrow Keys - Controls | Shift - Boost | Space - Shoot",
-			x=self.width // 2, y=self.height - 10, anchor="center")
+			x=self.width // 2, y=self.height - 10, anchor="center", color_pair=((0, 255, 0), (255, 0, 0)))
 		buttons_text = ["PLAY", "QUIT"]
-		self.buttons = [button.Button(window=self, text=txt, x=self.width // 2, y=20 + idx, anchor="center") 
+		self.buttons = [button.Button(window=self, text=txt, x=self.width // 2, y=20 + idx, anchor="center", color_pair=((0, 255, 0), None)) 
 			for idx, txt in enumerate(buttons_text)]
 		self.buttons[0].active = True
 		
 		self.player = player_obj.Player(window=self, x=self.width // 2, y=self.height - 4, direction=(0, 0), speed=(2, 1), 
-			images=clingine.util.load_images("resources/spaceship/"))
+			images=clingine.util.load_images("resources/spaceship/"), color_pair=((128, 40, 200), None))
 		asteroid_imgs = clingine.util.load_images("resources/asteroid/")
 
 		self.asteroids = [asteroid.Asteroid(window=self, x=random.randrange(1, self.width - 1 - asteroid_imgs[0].width), 
 			y=random.randrange(-asteroid_imgs[0].height - 40, -asteroid_imgs[0].height),
-			direction=(0, 1), speed=(0, 1), images=asteroid_imgs, image_num=random.randrange(len(asteroid_imgs))) for i in range(7)]
+			direction=(0, 1), speed=(0, 1), images=asteroid_imgs, image_num=random.randrange(len(asteroid_imgs)), color_pair=((128, 128, 128), None)) for i in range(7)]
 
-		self.score = clingine.label.Label(window=self, text="SCORE: {}".format(self.player.score), x=0, y=self.height - 2)
-		self.bullets_left = clingine.label.Label(window=self, text="BULLETS LEFT: {}".format(self.player.bullets_count), x=0, y=self.height - 3)
+		self.score = clingine.label.Label(window=self, text="SCORE: {}".format(self.player.score), x=0, y=self.height - 2, color_pair=((0, 255, 0), None))
+		self.bullets_left = clingine.label.Label(window=self, text="BULLETS LEFT: {}".format(self.player.bullets_count), x=0, y=self.height - 3, color_pair=((0, 255, 0), (0, 0, 255)))
 
 		self.stars = [star.Star(window=self, x=random.randrange(0, self.width - 1), width=1, height=1, 
-			y=random.randrange(self.height - 1), direction=(0, 1), speed=(0, 1)) for i in range(20)]
+			y=random.randrange(self.height - 1), direction=(0, 1), speed=(0, 1), color_pair=((255, 255, 255), None)) for i in range(20)]
 
 		self.cursor = 0
 
@@ -85,45 +85,36 @@ class GameWindow(clingine.window.Window):
 
 	def run(self):
 		# the Colors and ColorPairs classes should each have only 1 instance
-		colors = clingine.util.Colors()
-		color_pairs = clingine.util.ColorPairs(colors)
-		red = (255, 0, 0)
-		green = (0, 255, 0)
-		blue = (0, 0, 255)
-		black = (0, 0, 0)
-		white = (255, 255, 255)
-		colors.add(red, green, blue, black, white)
-		color_pairs.add((white, black), (green, black), (red, black), (blue, black))
-		self.fill(color_pairs.get_color_pair((white, black)))
+		self.fill(((255, 255, 255), (0, 0, 0)))
 		while self.running:
 			self.handle_key_events()
 			for star in self.stars:
 				star.update()
-				star.render(color_pairs.get_color_pair((white, black)))
+				star.render()
 			if self.player.state == "dead":
 				self.title.render()
 				self.help.render()
 				for btn in self.buttons:
 					btn.update()
-					btn.render(color_pairs.get_color_pair((green, black)))
+					btn.render()
 			else:
 				self.player.animate(loop=True, rate=1)
 				self.player.update()
-				self.player.render(color_pairs.get_color_pair((blue, black)))
+				self.player.render()
 				for bullet in self.player.bullets:
 					bullet.update()
-					bullet.render(color_pairs.get_color_pair((white, black)))
+					bullet.render()
 				for ast in self.asteroids:
 					ast.update()
 					if self.player.state == "dead":
 						self.reset()
 						break
 					ast.animate(loop=True, rate=2)
-					ast.render(color_pairs.get_color_pair((red, black)))
+					ast.render()
 			self.bullets_left.update("BULLETS LEFT: {}".format(self.player.bullets_count))
-			self.bullets_left.render(color_pairs.get_color_pair((green, black)))
+			self.bullets_left.render()
 			self.score.update("SCORE: {}".format(self.player.score))
-			self.score.render(color_pairs.get_color_pair((green, black)))
+			self.score.render()
 			self.update()
 			self.tick(self.fps)
 
