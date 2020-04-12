@@ -16,8 +16,13 @@ I don't know how to publish this package and I'm too lazy to learn.
 * More shapes
 * Windows os compatibility using Unicurses
 * Add double buffer mode
-* Color system
-	* Shapes colors, sprite properties, custom colors
+* Handle errors
+* Key listener
+* Image properties
+* Multiline Label
+
 
 ### DOING:
 * Color system
+	* simplify
+	* handle overflow

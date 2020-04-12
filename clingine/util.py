@@ -6,17 +6,8 @@ class Image:
 		self.width = width
 		self.height = height
 
-DEFAULT_COLORS = {
-	"black": curses.COLOR_BLACK,
-	"blue": curses.COLOR_BLUE,
-	"cyan": curses.COLOR_CYAN,
-	"green": curses.COLOR_GREEN,
-	"magenta": curses.COLOR_MAGENTA,
-	"red": curses.COLOR_RED,
-	"white": curses.COLOR_WHITE,
-	"yellow": curses.COLOR_YELLOW,
-}
 
+# rgb values range from 0 to 255
 class Colors:
 	def __init__(self):
 		self.custom_colors = {}
@@ -25,11 +16,19 @@ class Colors:
 		for rgb in rgbs:
 			color_number = self.generate_color_number()
 			self.custom_colors[rgb] = color_number
+			rgb = self.interpolate(rgb) # need to interpolate the input rgb values to values from 0 to 1000 so that curses can read them properly
 			curses.init_color(color_number, rgb[0], rgb[1], rgb[2])
 
 	def remove(self, *rgbs):
 		for rgb in rgbs:
 			del self.custom_colors[rgb]
+
+	def interpolate(self, rgb):
+		interpolated = []
+		for i in rgb:
+			x = i * 1000 // 255
+			interpolated.append(x)
+		return tuple(interpolated)
 
 	def get_color_number(self, rgb):
 		return self.custom_colors[rgb]	

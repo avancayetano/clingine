@@ -18,6 +18,7 @@ class Player(clingine.sprite.Sprite):
 		self.score = 0
 		self.bullets = []
 		self.bullets_count = self.init_bullets_count
+		self.shoot_cooldown = self.init_shoot_cooldown
 		self.x = self.init_pos[0]
 		self.y = self.init_pos[1]
 		self.direction = self.init_direction

@@ -24,13 +24,13 @@ class Rect:
 		for y in range(self.height):
 			for x in range(self.width):
 				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.char, None]
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.screen_array[int(self.y) + y][int(self.x) + x] != self.window.char, self.window.char, None]
 
 	def render(self, color_pair=None):
 		for y in range(self.height):
 			for x in range(self.width):
 				if 0 <= int(self.x) + x <= self.window.width -1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.char, color_pair]
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.screen_array[int(self.y) + y][int(self.x) + x] != self.char, self.char, color_pair]
 
 	def check_group_collision(self, others):
 		for obj in others:

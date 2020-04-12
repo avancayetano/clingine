@@ -8,18 +8,24 @@ class Label:
 		self.y = y
 		self.anchor = anchor
 
-	def update(self):
+	def update(self, new_text=None):
 		self.unrender()
+		if new_text:
+			self.text = new_text
 
 	def unrender(self):
 		if self.anchor == "center":
-			self.window.screen_array[self.y][self.x - len(self.text) // 2: self.x + len(self.text) // 2] = [[self.window.char, None] for i in self.text]
+			self.window.screen_array[self.y][self.x - len(self.text) // 2: self.x + len(self.text) // 2] = [
+				[i != self.window.char, self.window.char, None] for i in self.text]
 		elif self.anchor == "left":
-			self.window.screen_array[self.y][self.x: self.x + len(self.text)] = [[self.window.char, None] for i in self.text]
+			self.window.screen_array[self.y][self.x: self.x + len(self.text)] = [
+				[i != self.window.char, self.window.char, None] for i in self.text]
 
 
 	def render(self, color_pair=None):
 		if self.anchor == "center":
-			self.window.screen_array[self.y][self.x - len(self.text) // 2: self.x + len(self.text) // 2] = [[char, color_pair] for char in self.text]
+			self.window.screen_array[self.y][self.x - len(self.text) // 2: self.x + len(self.text) // 2] = [
+				[self.window.screen_array[self.y][self.x-len(self.text)//2+idx][0] != char, char, color_pair] for idx, char in enumerate(self.text)]
 		elif self.anchor == "left":
-			self.window.screen_array[self.y][self.x: self.x + len(self.text)] = [[char, color_pair] for char in self.text]
+			self.window.screen_array[self.y][self.x: self.x + len(self.text)] = [
+				[self.window.screen_array[self.y][self.x+idx] != char, char, color_pair] for idx, char in enumerate(self.text)]

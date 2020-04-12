@@ -53,14 +53,13 @@ class Window:
 			
 
 	def fill(self, color_pair):
-		# curses.init_pair(1, curses.COLOR_WHITE, util.DEFAULT_COLORS.get(color, curses.COLOR_BLACK))
-		# self.screen.bkgd(self.char, curses.color_pair(1) | curses.A_BOLD)
-		self.screen.bkgd(self.char, color_pair | curses.A_BOLD)
+		self.screen.bkgd(self.char, color_pair)
 
 	def reset(self):
-		self.screen_array = [] # 2D array of arrays, each with two values, char and color_pair
+		self.screen_array = [] # 2D array of arrays, each with three values, flag, char, and color_pair
+		# flag is a boolean that indicates whether that particular screen_arr value is changed / updated
 		for i in range(self.height):
-			self.screen_array.append([[self.char, None] for j in range(self.width)])
+			self.screen_array.append([[True, self.char, None] for j in range(self.width)])
 
 	
 	def run(self):
@@ -85,11 +84,13 @@ class Window:
 			for x in range(self.width):
 				if y != self.height - 1 and x != self.width - 1:
 					try:
-						color_pair = self.screen_array[y][x][1]
-						if color_pair:
-							self.screen.addstr(y, x, self.screen_array[y][x][0], color_pair | curses.A_BOLD)
-						else:
-							self.screen.addstr(y, x, self.screen_array[y][x][0], curses.color_pair(1) | curses.A_BOLD)
+						if self.screen_array[y][x][0]: # if that particular point is updated...
+							color_pair = self.screen_array[y][x][2]
+							if color_pair:
+								self.screen.addstr(y, x, self.screen_array[y][x][1], color_pair)
+							else:
+								self.screen.addstr(y, x, self.screen_array[y][x][1], curses.color_pair(1))
+						self.screen_array[y][x][0] = False
 					except:
 						# this happens when the terminal size is smaller than the self.screen_array size
 						self.screen.resize(self.height, self.width)
