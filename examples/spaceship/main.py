@@ -11,11 +11,11 @@ class GameWindow(clingine.window.Window):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
-		self.title = clingine.label.Label(window=self, text="< == SPACE == >", x=self.width // 2, y=15, anchor="center", color_pair=((0, 255, 0), (0, 0, 255)))
-		self.help = clingine.label.Label(window=self, text="Arrow Keys - Controls | Shift - Boost | Space - Shoot",
+		self.title = clingine.label.Label(window=self, text=["< == SPACE == >"], x=self.width // 2, y=15, anchor="center", color_pair=((0, 255, 0), (0, 0, 255)))
+		self.help = clingine.label.Label(window=self, text=["Arrow Keys - Controls | Shift - Boost | Space - Shoot"],
 			x=self.width // 2, y=self.height - 10, anchor="center", color_pair=((0, 255, 0), (255, 0, 0)))
 		buttons_text = ["PLAY", "QUIT"]
-		self.buttons = [button.Button(window=self, text=txt, x=self.width // 2, y=20 + idx, anchor="center", color_pair=((0, 255, 0), None)) 
+		self.buttons = [button.Button(window=self, text=[txt], x=self.width // 2, y=20 + idx, anchor="center", color_pair=((0, 255, 0), None)) 
 			for idx, txt in enumerate(buttons_text)]
 		self.buttons[0].active = True
 		
@@ -27,8 +27,8 @@ class GameWindow(clingine.window.Window):
 			y=random.randrange(-asteroid_imgs[0].height - 40, -asteroid_imgs[0].height),
 			direction=(0, 1), speed=(0, 1), images=asteroid_imgs, image_num=random.randrange(len(asteroid_imgs)), color_pair=((128, 128, 128), None)) for i in range(7)]
 
-		self.score = clingine.label.Label(window=self, text="SCORE: {}".format(self.player.score), x=0, y=self.height - 2, color_pair=((0, 255, 0), None))
-		self.bullets_left = clingine.label.Label(window=self, text="BULLETS LEFT: {}".format(self.player.bullets_count), x=0, y=self.height - 3, color_pair=((0, 255, 0), (0, 0, 255)))
+		self.score = clingine.label.Label(window=self, text=["SCORE: {}".format(self.player.score)], x=0, y=self.height - 2, color_pair=((0, 255, 0), None))
+		self.bullets_left = clingine.label.Label(window=self, text=["BULLETS LEFT: {}".format(self.player.bullets_count)], x=0, y=self.height - 3, color_pair=((0, 255, 0), (0, 0, 255)))
 
 		self.stars = [star.Star(window=self, x=random.randrange(0, self.width - 1), width=1, height=1, 
 			y=random.randrange(self.height - 1), direction=(0, 1), speed=(0, 1), color_pair=((255, 255, 255), None)) for i in range(20)]
@@ -64,7 +64,7 @@ class GameWindow(clingine.window.Window):
 				self.cursor += 1
 				self.released_keys.remove("down")
 
-			if ("enter" in self.pressed_keys) and "PLAY" in self.buttons[self.cursor].text:
+			if ("enter" in self.pressed_keys) and self.cursor == 0:
 				self.reset()
 				self.buttons[1].active_help = False
 				self.player.state = "alive"
@@ -72,7 +72,7 @@ class GameWindow(clingine.window.Window):
 				self.player.reset()
 				self.buttons[self.cursor].active_help = False
 
-			if ("enter" in self.pressed_keys) and "QUIT" in self.buttons[self.cursor].text:
+			if ("enter" in self.pressed_keys) and self.cursor == 1:
 				self.exit()
 
 			if self.cursor < 0:
@@ -82,11 +82,9 @@ class GameWindow(clingine.window.Window):
 			self.buttons[self.cursor].active = True
 			self.buttons[self.cursor].update()
 
-
 	def run(self):
-		# the Colors and ColorPairs classes should each have only 1 instance
-		self.fill(((255, 255, 255), (0, 0, 0)))
 		while self.running:
+
 			self.handle_key_events()
 			for star in self.stars:
 				star.update()
@@ -111,9 +109,9 @@ class GameWindow(clingine.window.Window):
 						break
 					ast.animate(loop=True, rate=2)
 					ast.render()
-			self.bullets_left.update("BULLETS LEFT: {}".format(self.player.bullets_count))
+			self.bullets_left.update(["BULLETS LEFT: {}".format(self.player.bullets_count)])
 			self.bullets_left.render()
-			self.score.update("SCORE: {}".format(self.player.score))
+			self.score.update(["SCORE: {}".format(self.player.score)])
 			self.score.render()
 			self.update()
 			self.tick(self.fps)

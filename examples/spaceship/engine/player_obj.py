@@ -27,7 +27,6 @@ class Player(clingine.sprite.Sprite):
 	def update(self):
 		self.unrender()
 		self.score += 1
-		self.window.score.text = "SCORE: {}".format(self.score)
 		self.x += self.direction[0] * self.speed[0]
 		self.y += self.direction[1] * self.speed[1]
 		self.check_bounds()
@@ -55,14 +54,6 @@ class Bullet(clingine.shapes.Rect):
 		super().__init__(*args, **kwargs)
 
 	def check_bounds(self):
-		collided_asteroid = self.check_group_collision(self.window.asteroids)
-		if collided_asteroid:
-			collided_asteroid.health -= 1
-			if collided_asteroid.health == 0:
-				collided_asteroid.reset()
-			self.unrender()
-			self.window.player.bullets.remove(self)
-
-		elif self.y < 0:
+		if self.y < 0:
 			self.unrender()
 			self.window.player.bullets.remove(self)

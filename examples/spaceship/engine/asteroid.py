@@ -22,3 +22,11 @@ class Asteroid(clingine.sprite.Sprite):
 				ast.reset()
 			time.sleep(1)
 
+		collided_bullet = self.check_group_collision(self.window.player.bullets)
+		if collided_bullet:
+			self.health -= 1
+			if self.health == 0:
+				self.reset()
+			collided_bullet.unrender()
+			self.window.player.bullets.remove(collided_bullet)
+

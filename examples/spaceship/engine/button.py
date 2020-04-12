@@ -4,11 +4,13 @@ class Button(clingine.label.Label):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.active = False
-		self.init_text = self.text
+		self.init_text = tuple(self.text)
 
 	def update(self):
 		if self.active:
-			self.text = "> {}".format(self.init_text)
+			for idx in range(len(self.text)):
+				self.text[idx] = "> {}".format(self.init_text[idx])
 		else:
 			self.unrender()
-			self.text = self.init_text
+			for idx in range(len(self.text)):
+				self.text[idx] = self.init_text[idx]

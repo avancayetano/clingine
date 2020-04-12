@@ -15,12 +15,11 @@ I don't know how to publish this package and I'm too lazy to learn.
 ## TO DO:
 * More shapes
 * Windows os compatibility using Unicurses
-* Add double buffer mode
-* Handle errors
-* Key listener
 * Image properties
-* Multiline Label
-
+* Use time delta in rendering/updating
+* Double buffer mode
+* Docs!
+* Publish
 
 ### DOING:
-* Multiline Label
+* Key listerner

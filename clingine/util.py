@@ -81,11 +81,11 @@ class ColorPairs:
 
 	def get_color_pair(self, rgb_pair):
 		rgb_pair_buffer = []
-		for i in rgb_pair:
-			if not i:
-				rgb_pair_buffer.append(self.window.background_color)
+		for i in range(len(rgb_pair)):
+			if not rgb_pair[i]:
+				rgb_pair_buffer.append(self.window.screen_color_pair[i])
 			else:
-				rgb_pair_buffer.append(i)
+				rgb_pair_buffer.append(rgb_pair[i])
 		rgb_pair = tuple(rgb_pair_buffer)
 		color_pair_number = self.color_pairs.get(rgb_pair, False)
 		if not color_pair_number:

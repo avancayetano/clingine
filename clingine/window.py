@@ -11,7 +11,7 @@ class Window:
 		self.fps = fps
 
 		self.color_pairs = util.ColorPairs(self)
-		self.background_color = (0, 0, 0)
+		self.screen_color_pair = ((255, 255, 255), (0, 0, 0))
 
 
 	def on_press(self, key):
@@ -46,6 +46,7 @@ class Window:
 			self.pressed_keys = set()
 			self.released_keys = set()
 			self.key_listener.start()
+			self.fill(self.screen_color_pair)
 			self.reset()
 			self.run() # the main game loop
 			self.exit()
@@ -56,7 +57,7 @@ class Window:
 			
 
 	def fill(self, color_pair):
-		self.background_color = color_pair[1]
+		self.screen_color_pair = color_pair
 		color_pair = self.color_pairs.get_color_pair(color_pair)
 		self.screen.bkgd(self.char, color_pair)
 
@@ -90,9 +91,12 @@ class Window:
 				if y != self.height - 1 and x != self.width - 1:
 					try:
 						if self.screen_array[y][x][0]: # if that particular point is updated...
-							color_pair = self.screen_array[y][x][2]
-							if color_pair:
-								self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(color_pair))
+							if curses.can_change_color():
+								color_pair = self.screen_array[y][x][2]
+								if color_pair:
+									self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(color_pair))
+								else:
+									self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(self.screen_color_pair))
 							else:
 								self.screen.addstr(y, x, self.screen_array[y][x][1], curses.color_pair(0))
 						self.screen_array[y][x][0] = False
