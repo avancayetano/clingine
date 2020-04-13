@@ -10,9 +10,9 @@ from engine import player_obj, asteroid, button, star
 class GameWindow(clingine.window.Window):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.title = clingine.label.Label(window=self, text=["< == SPACE == >"], x=self.width // 2, y=15, anchor="center", color_pair=((0, 255, 0), (0, 0, 255)))
-		self.help = clingine.label.Label(window=self, text=["Arrow Keys - Controls | Shift - Boost | Space - Shoot"],
-			x=self.width // 2, y=self.height - 10, anchor="center", color_pair=((0, 255, 0), (255, 0, 0)))
+		self.title = clingine.label.Label(window=self, text=["   < == SPACESHIP == >   "], x=self.width // 2, y=15, anchor="center", color_pair=((45, 52, 54), (255, 234, 167)))
+		self.help = clingine.label.Label(window=self, text=[" Arrow Keys - Controls | Shift - Boost | Space - Shoot "],
+			x=self.width // 2, y=self.height - 10, anchor="center", color_pair=((255, 255, 255), (45, 52, 54)))
 
 		buttons_text = ["PLAY", "QUIT"]
 		self.buttons = []
@@ -22,20 +22,20 @@ class GameWindow(clingine.window.Window):
 		self.buttons[0].active = True
 		
 		self.player = player_obj.Player(window=self, x=self.width // 2, y=self.height - 4, direction=(0, 0), speed=(120, 60), 
-			images=clingine.util.load_images("resources/spaceship/"), color_pair=((128, 40, 200), None))
+			images=clingine.util.load_images("resources/spaceship/"), color_pair=((129, 236, 236), None))
 
 		asteroid_imgs = clingine.util.load_images("resources/asteroid/")
 		self.asteroids = []
 		for i in range(7):
 			asteroid.Asteroid(window=self, x=random.randrange(1, self.width - 1 - asteroid_imgs[0].width), y=random.randrange(-asteroid_imgs[0].height - 40, -asteroid_imgs[0].height),
-				direction=(0, 1), speed=(0, 60), images=asteroid_imgs, image_num=random.randrange(len(asteroid_imgs)), color_pair=((128, 128, 128), None), group=self.asteroids)
+				direction=(0, 1), speed=(0, 60), images=asteroid_imgs, image_num=random.randrange(len(asteroid_imgs)), color_pair=((253, 203, 110), None), group=self.asteroids)
 
 
 		self.explosion_imgs = clingine.util.load_images("resources/explosion")
 		self.explosions = []
 
-		self.score = clingine.label.Label(window=self, text=["SCORE: {}".format(self.player.score)], x=0, y=self.height - 2, color_pair=((0, 255, 0), None))
-		self.bullets_left = clingine.label.Label(window=self, text=["BULLETS LEFT: {}".format(self.player.bullets_count)], x=0, y=self.height - 3, color_pair=((0, 255, 0), (0, 0, 255)))
+		self.score = clingine.label.Label(window=self, text=["SCORE: {}".format(self.player.score)], x=0, y=self.height - 2, color_pair=((255, 255, 255), None))
+		self.bullets_left = clingine.label.Label(window=self, text=["BULLETS LEFT: {}".format(self.player.bullets_count)], x=0, y=self.height - 3, color_pair=((255, 255, 255), None))
 
 		self.stars = []
 		for i in range(20):

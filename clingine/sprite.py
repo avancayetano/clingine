@@ -29,7 +29,7 @@ class Sprite:
 	def unrender(self):
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
-				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
+				if self.image[y][x] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
 					is_changed = not(self.window.screen_array[int(self.y) + y][int(self.x) + x][1:] == [self.window.char, self.window.screen_color_pair])
 					if not is_changed:
 						is_changed = self.window.screen_array[int(self.y) + y][int(self.x) + x][0]
@@ -38,7 +38,7 @@ class Sprite:
 	def render(self):
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
-				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
+				if self.image[y][x] != " " and 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
 					is_changed = not(self.window.screen_array[int(self.y) + y][int(self.x) + x][1:] == [self.image[y][x], self.color_pair])
 					if not is_changed:
 						is_changed = self.window.screen_array[int(self.y) + y][int(self.x) + x][0]
