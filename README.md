@@ -63,6 +63,7 @@ See examples/spaceship for another example on how to use this code stucture...
 * More shapes
 * Add double buffer mode (slower), my method is faster but idk if someone will need to access the current and next terminal screen buffer.
 * Image properties
+* Improve error handling and display
 * Audio
 * Docs!
 * Publish
