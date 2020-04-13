@@ -54,6 +54,6 @@ class Bullet(clingine.shapes.Rect):
 		super().__init__(*args, **kwargs)
 
 	def check_bounds(self):
-		if self.y <= 0:
+		if self.y < -1:
 			self.unrender()
 			self.window.player.bullets.remove(self)

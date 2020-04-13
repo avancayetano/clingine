@@ -26,9 +26,9 @@ class GameWindow(clingine.window.Window):
 
 		asteroid_imgs = clingine.util.load_images("resources/asteroid/")
 		self.asteroids = []
-		for i in range(7):
+		for i in range(10):
 			asteroid.Asteroid(window=self, x=random.randrange(1, self.width - 1 - asteroid_imgs[0].width), y=random.randrange(-asteroid_imgs[0].height - 40, -asteroid_imgs[0].height),
-				direction=(0, 1), speed=(0, 60), images=asteroid_imgs, image_num=random.randrange(len(asteroid_imgs)), color_pair=((253, 203, 110), None), group=self.asteroids)
+				direction=(0, 1), speed=(0, 60), images=asteroid_imgs, image_num=random.randrange(len(asteroid_imgs)), color_pair=((214, 48, 49), None), group=self.asteroids)
 
 
 		self.explosion_imgs = clingine.util.load_images("resources/explosion")
@@ -142,5 +142,5 @@ class GameWindow(clingine.window.Window):
 			
 
 if __name__ == "__main__":
-	window = GameWindow(width=130, height=50, fps=60)
+	window = GameWindow(width=140, height=55, fps=60)
 	window.start(window.run)
