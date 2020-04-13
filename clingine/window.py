@@ -3,8 +3,11 @@ from . import label, shapes, util
 
 class Window:
 	def __init__(self, width=80, height=22, char=" ", fps=60):
-		sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=height, cols=width)) # changes terminal dimensions
-		print() # this print is necessary; we need to print something to update the terminal dimensions after executing the line above
+		if sys.platform == "win32" or sys.platform == "cygwin":
+			os.system("mode {},{}".format(width, height))
+		else:
+			sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=height, cols=width)) # changes terminal dimensions
+			print() # this print is necessary; we need to print something to update the terminal dimensions after executing the line above
 		self.width = width
 		self.height = height
 		self.char = char
