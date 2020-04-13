@@ -22,12 +22,18 @@ class Label:
 			for idx in range(len(self.text)):
 				line = self.text[idx]
 				self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2: self.x + math.ceil((len(line) + 1) / 2)] = [
-					[i != self.window.char, self.window.char, None] for i in line]
+					[not(self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.screen_color_pair])
+						if not(self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.screen_color_pair])
+						else self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][0], # check if this point changed
+						self.window.char, self.window.screen_color_pair] for i, c in enumerate(line)]
 		elif self.anchor == "left":
 			for idx	in range((len(self.text))):
 				line = self.text[idx]
 				self.window.screen_array[self.y + idx][self.x: self.x + len(line)] = [
-					[i != self.window.char, self.window.char, None] for i in line]
+					[not(self.window.screen_array[self.y + idx][self.x + i][1:] == [self.window.char, self.window.screen_color_pair])
+						if not(self.window.screen_array[self.y + idx][self.x + i][1:] == [self.window.char, self.window.screen_color_pair])
+						else self.window.screen_array[self.y + idx][self.x + i][0], # check if this point changed
+						self.window.char, self.window.screen_color_pair] for i, c in enumerate(line)]
 
 
 	def render(self):
@@ -35,12 +41,18 @@ class Label:
 			for idx in range(len(self.text)):
 				line = self.text[idx]
 				self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2: self.x + math.ceil((len(line) + 1) / 2)] = [
-					[self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][0] != char, char, self.color_pair] for i, char in enumerate(line)]
+					[not(self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][1:] == [char, self.color_pair])
+						if not(self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][1:] == [char, self.color_pair])
+						else self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][0],  # check if this point changed
+						char, self.color_pair] for i, char in enumerate(line)]
 		elif self.anchor == "left":
 			for idx in range(len(self.text)):
 				line = self.text[idx]
 				self.window.screen_array[self.y + idx][self.x: self.x + len(line)] = [
-					[self.window.screen_array[self.y + idx][self.x + i] != char, char, self.color_pair] for i, char in enumerate(line)]
+					[not(self.window.screen_array[self.y + idx][self.x + i][1:] == [char, self.color_pair])
+						if not(self.window.screen_array[self.y + idx][self.x + i][1:] == [char, self.color_pair])
+						else self.window.screen_array[self.y + idx][self.x + i][0],  # check if this point changed
+						char, self.color_pair] for i, char in enumerate(line)]
 
 	def destroy(self):
 		self.unrender()

@@ -61,7 +61,7 @@ See examples/spaceship for another example on how to use this code stucture...
 
 ### TO DO:
 * More shapes
-* Double buffer mode.
+* Add double buffer mode (slower), my method is faster but idk if someone will need to access the current and next terminal screen buffer.
 * Image properties
 * Audio
 * Docs!

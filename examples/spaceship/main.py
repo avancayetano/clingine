@@ -116,6 +116,16 @@ class GameWindow(clingine.window.Window):
 				for ast in self.asteroids:
 					ast.update(dt)
 					if self.player.state == "dead":
+						self.player.unrender()
+						clingine.sprite.Sprite(window=self, x=self.player.x, y=self.player.y, direction=(0, 0), speed=(0, 0), images=self.explosion_imgs, image_num=0, color_pair=((255, 165, 0), None), group=self.explosions)
+						for exp in self.explosions:
+							while exp in self.explosions:
+								exp.animate(loop=False, rate=7*dt)
+								self.update()
+								self.tick(self.fps)
+						
+						for ast in self.asteroids:
+							ast.reset()
 						self.reset()
 						break
 					ast.animate(loop=True, rate=dt)

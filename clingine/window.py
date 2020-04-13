@@ -13,9 +13,6 @@ class Window:
 		self.char = char
 		self.fps = fps
 
-		self.color_pairs = util.ColorPairs(self)
-		self.screen_color_pair = ((255, 255, 255), (0, 0, 0))
-
 
 	def on_press(self, key):
 		try:
@@ -32,7 +29,8 @@ class Window:
 		except:
 			key = key.name
 		self.released_keys.add(key)
-		self.pressed_keys.remove(key)
+		if key in self.pressed_keys:
+			self.pressed_keys.remove(key)
 
 	def start(self, func):
 		try:
@@ -46,9 +44,10 @@ class Window:
 			self.running = True
 			self.clock = time.time()
 			self.key_listener = pynput.keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
-			self.pressed_keys = set()
-			self.released_keys = set()
 			self.key_listener.start()
+			self.color_pairs = util.ColorPairs(self)
+			self.screen_color_pair = ((255, 255, 255), (0, 0, 0))
+			self.color_pairs.add(self.screen_color_pair)
 			self.fill(self.screen_color_pair)
 			self.reset()
 			func() # the main game loop
@@ -67,10 +66,12 @@ class Window:
 		self.screen.bkgd(self.char, color_pair)
 
 	def reset(self):
+		self.released_keys = set()
+		self.pressed_keys = set()
 		self.screen_array = [] # 2D array of arrays, each with three values, flag, char, and color_pair
 		# flag is a boolean that indicates whether that particular screen_arr value is changed / updated
 		for i in range(self.height):
-			self.screen_array.append([[True, self.char, None] for j in range(self.width)])
+			self.screen_array.append([[True, self.char, self.screen_color_pair] for j in range(self.width)])
 
 	
 	def run(self):
@@ -95,12 +96,13 @@ class Window:
 			for x in range(self.width):
 				if y != self.height - 1 and x != self.width - 1:
 					try:
-						if self.screen_array[y][x][0]: # if that particular point is updated...
+						if self.screen_array[y][x][0]: # if that particular point is changed...
 							if curses.can_change_color():
 								color_pair = self.screen_array[y][x][2]
 								if color_pair:
 									self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(color_pair))
 								else:
+									self.screen_array[y][x][2] = self.screen_color_pair
 									self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(self.screen_color_pair))
 							else:
 								self.screen.addstr(y, x, self.screen_array[y][x][1], curses.color_pair(0))

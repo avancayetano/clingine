@@ -10,7 +10,7 @@ class Asteroid(clingine.sprite.Sprite):
 		self.health = self.init_health
 		self.unrender()
 		self.y = random.randrange(-self.height - 40, -self.height)
-		self.x = random.randrange(1, self.window.width - 21 - self.width)
+		self.x = random.randrange(1, self.window.width - 1 - self.width)
 
 	def check_bounds(self):
 		if self.y > self.window.height:
@@ -18,9 +18,6 @@ class Asteroid(clingine.sprite.Sprite):
 
 		if self.is_collided_with(self.window.player) and self.window.player.state == "alive":
 			self.window.player.state = "dead"
-			for ast in self.window.asteroids:
-				ast.reset()
-			time.sleep(1)
 
 		collided_bullet = self.check_group_collision(self.window.player.bullets)
 		if collided_bullet:

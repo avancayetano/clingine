@@ -14,6 +14,7 @@ class Rect:
 		self.group = group
 		if type(self.group) == list:
 			self.group.append(self)
+			
 	def update(self, dt):
 		self.unrender()
 		self.x += self.direction[0] * self.speed[0] * dt
@@ -27,13 +28,19 @@ class Rect:
 		for y in range(self.height):
 			for x in range(self.width):
 				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.screen_array[int(self.y) + y][int(self.x) + x] != self.window.char, self.window.char, None]
+					is_changed = not(self.window.screen_array[int(self.y) + y][int(self.x) + x][1:] == [self.window.char, self.window.screen_color_pair])
+					if not is_changed:
+						is_changed = self.window.screen_array[int(self.y) + y][int(self.x) + x][0]
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [is_changed, self.window.char, self.window.screen_color_pair]
 
 	def render(self):
 		for y in range(self.height):
 			for x in range(self.width):
 				if 0 <= int(self.x) + x <= self.window.width -1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [self.window.screen_array[int(self.y) + y][int(self.x) + x] != self.char, self.char, self.color_pair]
+					is_changed = not(self.window.screen_array[int(self.y) + y][int(self.x) + x][1:] == [self.char, self.color_pair])
+					if not is_changed:
+						is_changed = self.window.screen_array[int(self.y) + y][int(self.x) + x][0]
+					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [is_changed, self.char, self.color_pair]
 
 	def check_group_collision(self, others):
 		for obj in others:
