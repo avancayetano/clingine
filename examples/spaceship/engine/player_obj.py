@@ -18,17 +18,17 @@ class Player(clingine.sprite.Sprite):
 		self.score = 0
 		self.bullets = []
 		self.bullets_count = self.init_bullets_count
-		self.shoot_cooldown = self.init_shoot_cooldown
+		self.shoot_cooldown = 0
 		self.x = self.init_pos[0]
 		self.y = self.init_pos[1]
 		self.direction = self.init_direction
 		self.speed = self.init_speed
 
-	def update(self):
+	def update(self, dt):
 		self.unrender()
 		self.score += 1
-		self.x += self.direction[0] * self.speed[0]
-		self.y += self.direction[1] * self.speed[1]
+		self.x += self.direction[0] * self.speed[0] * dt
+		self.y += self.direction[1] * self.speed[1] * dt
 		self.check_bounds()
 
 	def check_bounds(self):
@@ -45,8 +45,8 @@ class Player(clingine.sprite.Sprite):
 		if self.bullets_count > 0 and self.shoot_cooldown == 0:
 			self.shoot_cooldown = self.init_shoot_cooldown
 			self.bullets_count -= 2
-			self.bullets.append(Bullet(window=self.window, x=self.x, y=self.y, width=1, height=1, direction=(0, -1), speed=(0, 1), char="O"))
-			self.bullets.append(Bullet(window=self.window, x=self.x + self.width - 1, y=self.y, width=1, height=1, direction=(0, -1), speed=(0, 1), char="O"))
+			Bullet(window=self.window, x=self.x, y=self.y, width=1, height=1, direction=(0, -1), speed=(0, 100), char="O", group=self.bullets)
+			Bullet(window=self.window, x=self.x + self.width - 1, y=self.y, width=1, height=1, direction=(0, -1), speed=(0, 100), char="O", group=self.bullets)
 		self.shoot_cooldown -= 1
 
 class Bullet(clingine.shapes.Rect):
@@ -54,6 +54,6 @@ class Bullet(clingine.shapes.Rect):
 		super().__init__(*args, **kwargs)
 
 	def check_bounds(self):
-		if self.y < 0:
+		if self.y <= 0:
 			self.unrender()
 			self.window.player.bullets.remove(self)

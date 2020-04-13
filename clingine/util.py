@@ -1,11 +1,4 @@
 import curses, os
-class Image:
-	def __init__(self, value, source, width, height):
-		self.value = value
-		self.source = source
-		self.width = width
-		self.height = height
-
 
 # rgb values range from 0 to 255
 class Colors:
@@ -92,6 +85,15 @@ class ColorPairs:
 			self.add(rgb_pair)
 			color_pair_number = self.color_pairs[rgb_pair]
 		return curses.color_pair(color_pair_number)
+
+
+class Image:
+	def __init__(self, value, source, width, height):
+		self.value = value
+		self.source = source
+		self.width = width
+		self.height = height
+
 
 
 def load_image(source):

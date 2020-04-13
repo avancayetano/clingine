@@ -34,7 +34,7 @@ class Window:
 		self.released_keys.add(key)
 		self.pressed_keys.remove(key)
 
-	def start(self):
+	def start(self, func):
 		try:
 			self.screen = curses.initscr()
 			curses.start_color()
@@ -51,13 +51,15 @@ class Window:
 			self.key_listener.start()
 			self.fill(self.screen_color_pair)
 			self.reset()
-			self.run() # the main game loop
+			func() # the main game loop
 			self.exit()
 
 		except Exception as e:
 			self.exit()
 			raise e
 			
+	def get_dt(self):
+		return time.time() - self.clock
 
 	def fill(self, color_pair):
 		self.screen_color_pair = color_pair

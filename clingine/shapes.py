@@ -1,6 +1,6 @@
 import clingine
 class Rect:
-	def __init__(self, window, x=0, y=0, width=1, height=1, direction=(0, 0), speed=(1, 1), char="*", color_pair=None):
+	def __init__(self, window, x=0, y=0, width=1, height=1, direction=(0, 0), speed=(0, 0), char="*", color_pair=None, group=None):
 		# x, y is the top left position of Rect
 		self.window = window
 		self.x = x
@@ -11,11 +11,13 @@ class Rect:
 		self.speed = speed
 		self.char = char
 		self.color_pair = color_pair
-
-	def update(self):
+		self.group = group
+		if type(self.group) == list:
+			self.group.append(self)
+	def update(self, dt):
 		self.unrender()
-		self.x += self.direction[0] * self.speed[0]
-		self.y += self.direction[1] * self.speed[1]
+		self.x += self.direction[0] * self.speed[0] * dt
+		self.y += self.direction[1] * self.speed[1] * dt
 		self.check_bounds()
 
 	def check_bounds():
@@ -43,3 +45,8 @@ class Rect:
 		if (self.x < other.x + other.width and self.x + self.width > other.x) and (self.y < other.y + other.height and self.y + self.height > other.y) \
 				and (isinstance(other, clingine.shapes.Rect) or isinstance(other, clingine.sprite.Sprite)):
 			return other
+
+	def destroy(self):
+		self.unrender()
+		if self.group:
+			self.group.remove(self)

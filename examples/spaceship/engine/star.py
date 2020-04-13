@@ -7,7 +7,7 @@ class Star(clingine.shapes.Rect):
 
 	def reset(self):
 		self.y = 0
-		self.x = random.randrange(self.window.width - 1)
+		self.x = random.randrange(self.window.width - 20)
 
 	def check_bounds(self):
 		if self.y > self.window.height:
