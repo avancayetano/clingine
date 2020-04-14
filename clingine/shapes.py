@@ -1,4 +1,5 @@
-import clingine
+from . import sprite, shapes, clock
+import math
 class Rect:
 	def __init__(self, window, x=0, y=0, width=1, height=1, direction=(0, 0), speed=(0, 0), char="*", color_pair=None, group=None):
 		# x, y is the top left position of Rect
@@ -27,20 +28,20 @@ class Rect:
 	def unrender(self):
 		for y in range(self.height):
 			for x in range(self.width):
-				if 0 <= int(self.x) + x <= self.window.width - 1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					is_changed = not(self.window.screen_array[int(self.y) + y][int(self.x) + x][1:] == [self.window.char, self.window.screen_color_pair])
+				if 0 <= math.floor(self.x) + x <= self.window.width - 1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
+					is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][1:] == [self.window.char, self.window.screen_color_pair])
 					if not is_changed:
-						is_changed = self.window.screen_array[int(self.y) + y][int(self.x) + x][0]
-					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [is_changed, self.window.char, self.window.screen_color_pair]
+						is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][0]
+					self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [is_changed, self.window.char, self.window.screen_color_pair]
 
 	def render(self):
 		for y in range(self.height):
 			for x in range(self.width):
-				if 0 <= int(self.x) + x <= self.window.width -1 and 0 <= int(self.y) + y <= self.window.height - 1:
-					is_changed = not(self.window.screen_array[int(self.y) + y][int(self.x) + x][1:] == [self.char, self.color_pair])
+				if 0 <= math.floor(self.x) + x <= self.window.width -1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
+					is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][1:] == [self.char, self.color_pair])
 					if not is_changed:
-						is_changed = self.window.screen_array[int(self.y) + y][int(self.x) + x][0]
-					self.window.screen_array[int(self.y) + y][int(self.x) + x] = [is_changed, self.char, self.color_pair]
+						is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][0]
+					self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [is_changed, self.char, self.color_pair]
 
 	def check_group_collision(self, others):
 		for obj in others:
@@ -50,7 +51,7 @@ class Rect:
 
 	def is_collided_with(self, other):
 		if (self.x < other.x + other.width and self.x + self.width > other.x) and (self.y < other.y + other.height and self.y + self.height > other.y) \
-				and (isinstance(other, clingine.shapes.Rect) or isinstance(other, clingine.sprite.Sprite)):
+				and (isinstance(other,shapes.Rect) or isinstance(other,sprite.Sprite)):
 			return other
 
 	def destroy(self):

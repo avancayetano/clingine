@@ -1,5 +1,5 @@
 import os, time, sys, curses, pynput
-from . import label, shapes, util
+from . import util, keyboard, clock, mouse
 
 class Window:
 	def __init__(self, width=80, height=22, char=" ", fps=60):
@@ -14,24 +14,6 @@ class Window:
 		self.fps = fps
 
 
-	def on_press(self, key):
-		try:
-			key = key.char
-		except:
-			key = key.name
-		self.pressed_keys.add(key)
-		if key in self.released_keys:
-			self.released_keys.remove(key)
-
-	def on_release(self, key):
-		try:
-			key = key.char
-		except:
-			key = key.name
-		self.released_keys.add(key)
-		if key in self.pressed_keys:
-			self.pressed_keys.remove(key)
-
 	def start(self, func):
 		try:
 			self.screen = curses.initscr()
@@ -42,9 +24,9 @@ class Window:
 			self.screen.nodelay(True)
 			self.screen.keypad(True)
 			self.running = True
-			self.clock = time.time()
-			self.key_listener = pynput.keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
-			self.key_listener.start()
+			self.clock = clock.Clock()
+			self.keyboard = keyboard.Keyboard(self)
+			self.mouse = mouse.Mouse(self)
 			self.color_pairs = util.ColorPairs(self)
 			self.screen_color_pair = ((255, 255, 255), (0, 0, 0))
 			self.color_pairs.add(self.screen_color_pair)
@@ -56,9 +38,6 @@ class Window:
 		except Exception as e:
 			self.exit()
 			raise e
-			
-	def get_dt(self):
-		return time.time() - self.clock
 
 	def fill(self, color_pair):
 		self.screen_color_pair = color_pair
@@ -66,8 +45,7 @@ class Window:
 		self.screen.bkgd(self.char, color_pair)
 
 	def reset(self):
-		self.released_keys = set()
-		self.pressed_keys = set()
+
 		self.screen_array = [] # 2D array of arrays, each with three values, flag, char, and color_pair
 		# flag is a boolean that indicates whether that particular screen_arr value is changed / updated
 		for i in range(self.height):
@@ -79,10 +57,6 @@ class Window:
 		pass
 
 
-	def tick(self, fps):
-		self.clock = time.time()
-		time.sleep(1 / fps)
-
 	def exit(self):
 		self.running = False
 		curses.nocbreak()
@@ -90,8 +64,9 @@ class Window:
 		curses.echo()
 		curses.endwin()
 
-	def update(self):
-		self.screen.getch() # this is necessary so that the keys you inputted while playing wont echo in the terminal after you exit the game
+	def update(self, fps):
+		if not self.mouse.listener_active:
+			self.screen.getch()
 		for y in range(self.height):
 			for x in range(self.width):
 				if y != self.height - 1 and x != self.width - 1:
@@ -110,4 +85,7 @@ class Window:
 					except:
 						# this happens when the terminal size is smaller than the self.screen_array size
 						self.screen.resize(self.height, self.width)
+		self.mouse.clear_events()
 		self.screen.refresh()
+		self.clock.update()
+		self.clock.delay(1 / fps)

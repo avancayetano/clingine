@@ -22,13 +22,12 @@ rect_obj = clingine.shapes.Rect(window, x=0, y=0, width=10, height=5, direction=
 def game_loop():
 	while window.running:
 		dt = self.get_dt()
-
+		pressed_keys = window.keyboard.get_pressed()
 		# your game logic here...
 		rect_obj.update(dt)
 		rect_obj.render()
 
-		window.update()
-		window.tick(window.fps)
+		window.update(window.fps)
 	return
 
 window.start(game_loop)
@@ -45,11 +44,11 @@ class GameWindow(clingine.window.Window)
 	def run(self):
 		while self.running:
 			dt = self.get_dt()
+			pressed_keys = self.keyboard.get_pressed()
 			# game logic here
 			self.rect_obj.update(dt)
 			self.rect_obj.render()
-			self.update()
-			self.tick(self.fps)
+			self.update(self.fps)
 		return
 
 if __name__ == "__main__":
@@ -61,9 +60,13 @@ See examples/spaceship for another example on how to use this code stucture...
 
 ### TO DO:
 * More shapes
-* Add double buffer mode (slower), my method is faster but idk if someone will need to access the current and next terminal screen buffer.
 * Image properties
 * Improve error handling and display
+* MapLoader
+* Surface objects
+* Mouse input
+* Physics engine
+* New window
 * Audio
 * Docs!
 * Publish

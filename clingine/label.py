@@ -21,18 +21,18 @@ class Label:
 		if self.anchor == "center":
 			for idx in range(len(self.text)):
 				line = self.text[idx]
-				self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2: self.x + math.ceil((len(line) + 1) / 2)] = [
-					[not(self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.screen_color_pair])
-						if not(self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.screen_color_pair])
-						else self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][0], # check if this point changed
+				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2: math.floor(self.x) + math.ceil((len(line) + 1) / 2)] = [
+					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.screen_color_pair])
+						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.screen_color_pair])
+						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][0], # check if this point changed
 						self.window.char, self.window.screen_color_pair] for i, c in enumerate(line)]
 		elif self.anchor == "left":
 			for idx	in range((len(self.text))):
 				line = self.text[idx]
-				self.window.screen_array[self.y + idx][self.x: self.x + len(line)] = [
-					[not(self.window.screen_array[self.y + idx][self.x + i][1:] == [self.window.char, self.window.screen_color_pair])
-						if not(self.window.screen_array[self.y + idx][self.x + i][1:] == [self.window.char, self.window.screen_color_pair])
-						else self.window.screen_array[self.y + idx][self.x + i][0], # check if this point changed
+				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x): math.floor(self.x) + len(line)] = [
+					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [self.window.char, self.window.screen_color_pair])
+						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [self.window.char, self.window.screen_color_pair])
+						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][0], # check if this point changed
 						self.window.char, self.window.screen_color_pair] for i, c in enumerate(line)]
 
 
@@ -40,18 +40,18 @@ class Label:
 		if self.anchor == "center":
 			for idx in range(len(self.text)):
 				line = self.text[idx]
-				self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2: self.x + math.ceil((len(line) + 1) / 2)] = [
-					[not(self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][1:] == [char, self.color_pair])
-						if not(self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][1:] == [char, self.color_pair])
-						else self.window.screen_array[self.y + idx][self.x - (len(line) - 1) // 2 + i][0],  # check if this point changed
+				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2: math.floor(self.x) + math.ceil((len(line) + 1) / 2)] = [
+					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [char, self.color_pair])
+						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [char, self.color_pair])
+						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][0],  # check if this point changed
 						char, self.color_pair] for i, char in enumerate(line)]
 		elif self.anchor == "left":
 			for idx in range(len(self.text)):
 				line = self.text[idx]
-				self.window.screen_array[self.y + idx][self.x: self.x + len(line)] = [
-					[not(self.window.screen_array[self.y + idx][self.x + i][1:] == [char, self.color_pair])
-						if not(self.window.screen_array[self.y + idx][self.x + i][1:] == [char, self.color_pair])
-						else self.window.screen_array[self.y + idx][self.x + i][0],  # check if this point changed
+				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x): math.floor(self.x) + len(line)] = [
+					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [char, self.color_pair])
+						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [char, self.color_pair])
+						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][0],  # check if this point changed
 						char, self.color_pair] for i, char in enumerate(line)]
 
 	def destroy(self):

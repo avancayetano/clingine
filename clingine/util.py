@@ -112,6 +112,7 @@ def load_image(source):
 
 def load_images(source):
 	imgs = []
-	for file in os.listdir(source):
+	files = sorted(os.listdir(source), key=lambda name: int(name.split("_")[1].split(".")[0]))
+	for file in files:
 		imgs.append(load_image("{}/{}".format(source, file)))
 	return imgs

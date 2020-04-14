@@ -1,4 +1,4 @@
-import clingine, curses
+import clingine
 class Player(clingine.sprite.Sprite):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -45,8 +45,8 @@ class Player(clingine.sprite.Sprite):
 		if self.bullets_count > 0 and self.shoot_cooldown == 0:
 			self.shoot_cooldown = self.init_shoot_cooldown
 			self.bullets_count -= 2
-			Bullet(window=self.window, x=self.x, y=self.y, width=1, height=1, direction=(0, -1), speed=(0, 100), char="O", group=self.bullets, color_pair=((255, 255, 0), None))
-			Bullet(window=self.window, x=self.x + self.width - 1, y=self.y, width=1, height=1, direction=(0, -1), speed=(0, 100), char="O", group=self.bullets, color_pair=((255, 255, 0), None))
+			Bullet(window=self.window, x=self.x, y=self.y, width=1, height=1, direction=(0, -1), speed=(0, 100), char="O", group=self.bullets, color_pair=((255, 165, 0), None))
+			Bullet(window=self.window, x=self.x + self.width - 1, y=self.y, width=1, height=1, direction=(0, -1), speed=(0, 100), char="O", group=self.bullets, color_pair=((255, 165, 0), None))
 		self.shoot_cooldown -= 1
 
 class Bullet(clingine.shapes.Rect):
@@ -54,6 +54,6 @@ class Bullet(clingine.shapes.Rect):
 		super().__init__(*args, **kwargs)
 
 	def check_bounds(self):
-		if self.y < -1:
+		if self.y < 0:
 			self.unrender()
 			self.window.player.bullets.remove(self)

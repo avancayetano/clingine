@@ -1,6 +1,4 @@
-import sys, os, time, random, curses
-
-# warning: hard-coded shit below: 
+import sys, random
 sys.path.append(sys.path[0] + "/../..") # cause main.py is two directories away from the clingine package
 
 
@@ -10,6 +8,7 @@ from engine import player_obj, asteroid, button, star
 class GameWindow(clingine.window.Window):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
+
 		self.title = clingine.label.Label(window=self, text=["   < == SPACESHIP == >   "], x=self.width // 2, y=15, anchor="center", color_pair=((45, 52, 54), (255, 234, 167)))
 		self.help = clingine.label.Label(window=self, text=[" Arrow Keys - Controls | Shift - Boost | Space - Shoot "],
 			x=self.width // 2, y=self.height - 10, anchor="center", color_pair=((255, 255, 255), (45, 52, 54)))
@@ -45,37 +44,38 @@ class GameWindow(clingine.window.Window):
 		self.cursor = 0
 
 
-	def handle_key_events(self):
+	def handle_key_events(self, pressed, released):
 		if self.player.state == "alive":
 			self.player.direction = (0, 0)
 			self.player.speed = self.player.init_speed
-			if "shift" in self.pressed_keys:
+			if "shift" in pressed:
 				self.player.speed = (self.player.speed[0] * 2, self.player.speed[1] * 2)
-			if "up" in self.pressed_keys and not ("down" in self.pressed_keys):
+			if "up" in pressed and not ("down" in pressed):
 				self.player.direction = (self.player.direction[0], -1)
-			if "down" in self.pressed_keys and not ("up" in self.pressed_keys):
+			if "down" in pressed and not ("up" in pressed):
 				self.player.direction = (self.player.direction[0], 1)
-			if "right" in self.pressed_keys and not ("left" in self.pressed_keys):
+			if "right" in pressed and not ("left" in pressed):
 				self.player.direction = (1, self.player.direction[1])
-			if "left" in self.pressed_keys and not ("right" in self.pressed_keys):
+			if "left" in pressed and not ("right" in pressed):
 				self.player.direction = (-1, self.player.direction[1])
-			if "space" in self.pressed_keys:
+			if "space" in pressed:
 				self.player.shoot()
-			if "space" in self.released_keys:
+			if "space" in released:
 				self.player.shoot_cooldown = 0
 		else:
-			if "up" in self.released_keys:
+			if "up" in released:
 				self.buttons[self.cursor].active = False
 				self.buttons[self.cursor].update()
 				self.cursor -= 1
-				self.released_keys.remove("up")
-			if "down" in self.released_keys:
+				released.remove("up")
+			if "down" in released:
 				self.buttons[self.cursor].active = False
 				self.buttons[self.cursor].update()
 				self.cursor += 1
-				self.released_keys.remove("down")
+				released.remove("down")
 
-			if ("enter" in self.pressed_keys) and self.cursor == 0:
+			if ("enter" in pressed) and self.cursor == 0:
+				self.keyboard.clear_events()
 				self.reset()
 				self.buttons[1].active_help = False
 				self.player.state = "alive"
@@ -83,7 +83,7 @@ class GameWindow(clingine.window.Window):
 				self.player.reset()
 				self.buttons[self.cursor].active_help = False
 
-			if ("enter" in self.pressed_keys) and self.cursor == 1:
+			if ("enter" in pressed) and self.cursor == 1:
 				self.exit()
 
 			if self.cursor < 0:
@@ -95,8 +95,11 @@ class GameWindow(clingine.window.Window):
 
 	def run(self):
 		while self.running:
-			dt = self.get_dt()
-			self.handle_key_events()
+			dt = self.clock.get_dt()
+			pressed_keys = self.keyboard.get_pressed()
+			released_keys = self.keyboard.get_released()
+			# clicked = self.mouse.get_clicked()
+			self.handle_key_events(pressed_keys, released_keys)
 			for star in self.stars:
 				star.update(dt)
 				star.render()
@@ -109,7 +112,7 @@ class GameWindow(clingine.window.Window):
 			else:
 				
 				self.player.update(dt)
-				self.player.animate(loop=True, rate=dt)
+				self.player.animate(loop=True, fps=self.fps)
 				for bullet in self.player.bullets:
 					bullet.update(dt)
 					bullet.render()
@@ -117,26 +120,26 @@ class GameWindow(clingine.window.Window):
 					ast.update(dt)
 					if self.player.state == "dead":
 						self.player.unrender()
-						clingine.sprite.Sprite(window=self, x=self.player.x, y=self.player.y, direction=(0, 0), speed=(0, 0), images=self.explosion_imgs, image_num=0, color_pair=((255, 165, 0), None), group=self.explosions)
-						for exp in self.explosions:
-							while exp in self.explosions:
-								exp.animate(loop=False, rate=7*dt)
-								self.update()
-								self.tick(self.fps)
+						clingine.sprite.Sprite(window=self, x=self.player.x, y=self.player.y, direction=(0, 0), speed=(0, 0), images=self.explosion_imgs, image_num=0, color_pair=((255, 255, 0), None), group=self.explosions)
+
+						while self.explosions:
+							for exp in self.explosions:
+								exp.animate(loop=False, fps=self.fps/5)
+								self.update(self.fps)
 						
 						for ast in self.asteroids:
 							ast.reset()
+						self.keyboard.clear_events()
 						self.reset()
 						break
-					ast.animate(loop=True, rate=dt)
+					ast.animate(loop=True, fps=self.fps)
 				for exp in self.explosions:
-					exp.animate(loop=False, rate=3*dt)
+					exp.animate(loop=False, fps=self.fps/3)
 			self.bullets_left.update(["BULLETS LEFT: {}".format(self.player.bullets_count)])
 			self.bullets_left.render()
 			self.score.update(["SCORE: {}".format(self.player.score)])
 			self.score.render()
-			self.update()
-			self.tick(self.fps)
+			self.update(self.fps)
 
 		return
 			
