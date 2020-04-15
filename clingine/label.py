@@ -7,7 +7,10 @@ class Label:
 		self.x = x
 		self.y = y
 		self.anchor = anchor
-		self.color_pair = color_pair
+		if type(color_pair) != None:
+			self.color_pair = tuple(color_pair)
+		else:
+			self.color_pair = color_pair
 		self.group = group
 		if type(self.group) == list:
 			self.group.append(self)

@@ -5,10 +5,13 @@ class Sprite:
 		self.window = window
 		self.x = x
 		self.y = y
-		self.direction = direction
-		self.speed = speed
+		self.direction = tuple(direction)
+		self.speed = tuple(speed)
 
-		self.color_pair = color_pair
+		if type(color_pair) != None:
+			self.color_pair = tuple(color_pair)
+		else:
+			self.color_pair = color_pair
 
 		self.images = images
 		self.image_num = image_num

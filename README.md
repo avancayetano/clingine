@@ -65,6 +65,7 @@ See examples/spaceship for another example on how to use this code stucture...
 * MapLoader
 * Surface objects
 * Mouse input (improve)
+* Tile mapping
 * Physics engine
 * New window
 * Audio
