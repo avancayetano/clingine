@@ -22,7 +22,7 @@ class Rect:
 		self.y += self.direction[1] * self.speed[1] * dt
 		self.check_bounds()
 
-	def check_bounds():
+	def check_bounds(self):
 		pass
 
 	def unrender(self):

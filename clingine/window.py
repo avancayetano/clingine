@@ -27,6 +27,7 @@ class Window:
 			self.clock = clock.Clock()
 			self.keyboard = keyboard.Keyboard(self)
 			self.mouse = mouse.Mouse(self)
+			curses.mouseinterval(0)
 			self.color_pairs = util.ColorPairs(self)
 			self.screen_color_pair = ((255, 255, 255), (0, 0, 0))
 			self.color_pairs.add(self.screen_color_pair)
@@ -65,7 +66,7 @@ class Window:
 		curses.endwin()
 
 	def update(self, fps):
-		if not self.mouse.listener_active:
+		if not self.mouse.listener_running:
 			self.screen.getch()
 		for y in range(self.height):
 			for x in range(self.width):

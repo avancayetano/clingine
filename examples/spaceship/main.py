@@ -98,7 +98,7 @@ class GameWindow(clingine.window.Window):
 			dt = self.clock.get_dt()
 			pressed_keys = self.keyboard.get_pressed()
 			released_keys = self.keyboard.get_released()
-			# clicked = self.mouse.get_clicked()
+			clicked = self.mouse.get_clicked()
 			self.handle_key_events(pressed_keys, released_keys)
 			for star in self.stars:
 				star.update(dt)
