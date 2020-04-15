@@ -67,7 +67,6 @@ class Triangle:
 	def __init__(self, window, vertices=(), direction=(0, 0), speed=(0, 0), char="*", color_pair=None, group=None):
 		self.window = window
 		self.vertices = tuple(tuple(v) for v in sorted(list(vertices), key=lambda x: (x[1], x[0])))
-		print(self.vertices)
 		self.direction = tuple(direction)
 		self.speed = tuple(speed)
 		if type(color_pair) != None:
