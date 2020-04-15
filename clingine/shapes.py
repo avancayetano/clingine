@@ -79,6 +79,52 @@ class Triangle:
 		if type(self.group) == list:
 			self.group.append(self)
 
+
+	def render(self):
+		x1, y1 = self.vertices[0][0], self.vertices[0][1]
+		x2, y2 = self.vertices[1][0], self.vertices[1][1]
+		x3, y3 = self.vertices[2][0], self.vertices[2][1]
+
+		if y2 == y3:
+			self.fill_flat_bottom_triangle(x1, y1, x2, y2, x3, y3, self.char, self.color_pair)
+		elif y1 == y2:
+			self.fill_flat_top_triangle(x1, y1, x2, y2, x3, y3, self.char, self.color_pair)
+		else:
+			x4 = x1 + (y2 - y1) / (y3 - y1) * (x3 - x1)
+			y4 = y2
+			self.fill_flat_bottom_triangle(x1, y1, x2, y2, x4, y4, self.char, self.color_pair)
+			self.fill_flat_top_triangle(x2, y2, x4, y4, x3, y3, self.char, self.color_pair)
+
+
+	def draw_line(self, x1, x2, y, char, color_pair):
+		for x in range(math.floor(x1), math.floor(x2) + 1):
+			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+				self.window.screen_array[y][x] = [True, char, color_pair]
+
+	def fill_flat_bottom_triangle(self, x1, y1, x2, y2, x3, y3, char, color_pair):
+		slope_1 = (x2 - x1) / (y2 - y1)
+		slope_2 = (x3 - x1) / (y3 - y1)
+		cur_x1 = x1
+		cur_x2 = x1
+		for y in range(math.floor(y1), math.floor(y2) + 1):
+			self.draw_line(cur_x1, cur_x2, y, char, color_pair)
+			cur_x1 += slope_1
+			cur_x2 += slope_2
+
+
+	def fill_flat_top_triangle(self, x1, y1, x2, y2, x3, y3, char, color_pair):
+		slope_1 = (x3 - x1) / (y3 - y1)
+		slope_2 = (x3 - x2) / (y3 - y2)
+
+		cur_x1 = x3
+		cur_x2 = x3
+
+		for y in range(math.floor(y3), math.floor(y1), -1):
+			self.draw_line(cur_x1, cur_x2, y, char, color_pair)
+			cur_x1 -= slope_1
+			cur_x2 -= slope_2
+
+
 	def update(self, dt):
 		self.unrender()
 		new_vertices = []
@@ -92,62 +138,19 @@ class Triangle:
 		pass
 
 
-	def render(self):
-		x1, y1 = self.vertices[0][0], self.vertices[0][1]
-		x2, y2 = self.vertices[1][0], self.vertices[1][1]
-		x3, y3 = self.vertices[2][0], self.vertices[2][1]
-
-		if y2 == y3:
-			self.fill_bottom(x1, y1, x2, y2, x3, y3, self.char, self.color_pair)
-		elif y1 == y2:
-			self.fill_top(x1, y1, x2, y2, x3, y3, self.char, self.color_pair)
-		else:
-			x4 = x1 + (y2 - y1) / (y3 - y1) * (x3 - x1)
-			y4 = y2
-			self.fill_bottom(x1, y1, x2, y2, x4, y4, self.char, self.color_pair)
-			self.fill_top(x2, y2, x4, y4, x3, y3, self.char, self.color_pair)
-
 	def unrender(self):
 		x1, y1 = self.vertices[0][0], self.vertices[0][1]
 		x2, y2 = self.vertices[1][0], self.vertices[1][1]
 		x3, y3 = self.vertices[2][0], self.vertices[2][1]
 		if y2 == y3:
-			self.fill_bottom(x1, y1, x2, y2, x3, y3, self.window.char, self.window.screen_color_pair)
+			self.fill_flat_bottom_triangle(x1, y1, x2, y2, x3, y3, self.window.char, self.window.screen_color_pair)
 		elif y1 == y2:
-			self.fill_top(x1, y1, x2, y2, x3, y3, self.window.char, self.window.screen_color_pair)
+			self.fill_flat_top_triangle(x1, y1, x2, y2, x3, y3, self.window.char, self.window.screen_color_pair)
 		else:
 			x4 = x1 + (y2 - y1) / (y3 - y1) * (x3 - x1)
 			y4 = y2
-			self.fill_bottom(x1, y1, x2, y2, x4, y4, self.window.char, self.window.screen_color_pair)
-			self.fill_top(x2, y2, x4, y4, x3, y3, self.window.char, self.window.screen_color_pair)
-
-	def draw_line(self, x1, x2, y, char, color_pair):
-		for x in range(math.floor(x1), math.floor(x2) + 1):
-			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
-				self.window.screen_array[y][x] = [True, char, color_pair]
-
-	def fill_bottom(self, x1, y1, x2, y2, x3, y3, char, color_pair):
-		slope_1 = (x2 - x1) / (y2 - y1)
-		slope_2 = (x3 - x1) / (y3 - y1)
-		cur_x1 = x1
-		cur_x2 = x1
-		for y in range(math.floor(y1), math.floor(y2) + 1):
-			self.draw_line(cur_x1, cur_x2, y, char, color_pair)
-			cur_x1 += slope_1
-			cur_x2 += slope_2
-
-
-	def fill_top(self, x1, y1, x2, y2, x3, y3, char, color_pair):
-		slope_1 = (x3 - x1) / (y3 - y1)
-		slope_2 = (x3 - x2) / (y3 - y2)
-
-		cur_x1 = x3
-		cur_x2 = x3
-
-		for y in range(math.floor(y3), math.floor(y1), -1):
-			self.draw_line(cur_x1, cur_x2, y, char, color_pair)
-			cur_x1 -= slope_1
-			cur_x2 -= slope_2
+			self.fill_flat_bottom_triangle(x1, y1, x2, y2, x4, y4, self.window.char, self.window.screen_color_pair)
+			self.fill_flat_top_triangle(x2, y2, x4, y4, x3, y3, self.window.char, self.window.screen_color_pair)
 
 	def check_group_collision(self, others):
 		for obj in others:
