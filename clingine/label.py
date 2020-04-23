@@ -7,7 +7,7 @@ class Label:
 		self.x = x
 		self.y = y
 		self.anchor = anchor
-		if type(color_pair) != None:
+		if color_pair != None:
 			self.color_pair = tuple(color_pair)
 		else:
 			self.color_pair = color_pair
@@ -25,18 +25,18 @@ class Label:
 			for idx in range(len(self.text)):
 				line = self.text[idx]
 				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2: math.floor(self.x) + math.ceil((len(line) + 1) / 2)] = [
-					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.screen_color_pair])
-						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.screen_color_pair])
+					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.color_pair])
+						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.color_pair])
 						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][0], # check if this point changed
-						self.window.char, self.window.screen_color_pair] for i, c in enumerate(line)]
+						self.window.char, self.window.color_pair] for i, c in enumerate(line)]
 		elif self.anchor == "left":
 			for idx	in range((len(self.text))):
 				line = self.text[idx]
 				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x): math.floor(self.x) + len(line)] = [
-					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [self.window.char, self.window.screen_color_pair])
-						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [self.window.char, self.window.screen_color_pair])
+					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [self.window.char, self.window.color_pair])
+						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [self.window.char, self.window.color_pair])
 						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][0], # check if this point changed
-						self.window.char, self.window.screen_color_pair] for i, c in enumerate(line)]
+						self.window.char, self.window.color_pair] for i, c in enumerate(line)]
 
 
 	def render(self):

@@ -8,7 +8,7 @@ class Sprite:
 		self.direction = tuple(direction)
 		self.speed = tuple(speed)
 
-		if type(color_pair) != None:
+		if color_pair != None:
 			self.color_pair = tuple(color_pair)
 		else:
 			self.color_pair = color_pair
@@ -34,10 +34,10 @@ class Sprite:
 		for y in range(len(self.image)):
 			for x in range(len(self.image[y])):
 				if self.image[y][x] != " " and 0 <= math.floor(self.x) + x <= self.window.width - 1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
-					is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][1:] == [self.window.char, self.window.screen_color_pair])
+					is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][1:] == [self.window.char, self.window.color_pair])
 					if not is_changed:
 						is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][0]
-					self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [is_changed, self.window.char, self.window.screen_color_pair]
+					self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [is_changed, self.window.char, self.window.color_pair]
 
 	def render(self):
 		for y in range(len(self.image)):

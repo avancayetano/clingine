@@ -76,7 +76,7 @@ class ColorPairs:
 		rgb_pair_buffer = []
 		for i in range(len(rgb_pair)):
 			if not rgb_pair[i]:
-				rgb_pair_buffer.append(self.window.screen_color_pair[i])
+				rgb_pair_buffer.append(self.window.color_pair[i])
 			else:
 				rgb_pair_buffer.append(rgb_pair[i])
 		rgb_pair = tuple(rgb_pair_buffer)

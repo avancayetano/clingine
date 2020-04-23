@@ -1,4 +1,4 @@
-import os, time, sys, curses, pynput
+import os, time, sys, curses, pynput, math
 from . import util, keyboard, clock, mouse
 
 class Window:
@@ -29,9 +29,9 @@ class Window:
 			self.mouse = mouse.Mouse(self)
 			curses.mouseinterval(0)
 			self.color_pairs = util.ColorPairs(self)
-			self.screen_color_pair = ((255, 255, 255), (0, 0, 0))
-			self.color_pairs.add(self.screen_color_pair)
-			self.fill(self.screen_color_pair)
+			self.color_pair = ((255, 255, 255), (0, 0, 0))
+			self.color_pairs.add(self.color_pair)
+			self.fill(self.color_pair)
 			self.reset()
 			func() # the main game loop
 			self.exit()
@@ -41,7 +41,7 @@ class Window:
 			raise e
 
 	def fill(self, color_pair):
-		self.screen_color_pair = color_pair
+		self.color_pair = color_pair
 		color_pair = self.color_pairs.get_color_pair(color_pair)
 		self.screen.bkgd(self.char, color_pair)
 
@@ -49,8 +49,8 @@ class Window:
 
 		self.screen_array = [] # 2D array of arrays, each with three values, flag, char, and color_pair
 		# flag is a boolean that indicates whether that particular screen_arr value is changed / updated
-		for i in range(self.height):
-			self.screen_array.append([[True, self.char, self.screen_color_pair] for j in range(self.width)])
+		for i in range(math.floor(self.height)):
+			self.screen_array.append([[True, self.char, self.color_pair] for j in range(math.floor(self.width))])
 
 	
 	def run(self):
@@ -68,9 +68,9 @@ class Window:
 	def update(self, fps):
 		if not self.mouse.listener_running:
 			self.screen.getch()
-		for y in range(self.height):
-			for x in range(self.width):
-				if y != self.height - 1 and x != self.width - 1:
+		for y in range(math.floor(self.height)):
+			for x in range(math.floor(self.width)):
+				if y != math.floor(self.height) - 1 and x != math.floor(self.width) - 1:
 					try:
 						if self.screen_array[y][x][0]: # if that particular point is changed...
 							if curses.can_change_color():
@@ -78,14 +78,14 @@ class Window:
 								if color_pair:
 									self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(color_pair))
 								else:
-									self.screen_array[y][x][2] = self.screen_color_pair
-									self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(self.screen_color_pair))
+									self.screen_array[y][x][2] = self.color_pair
+									self.screen.addstr(y, x, self.screen_array[y][x][1], self.color_pairs.get_color_pair(self.color_pair))
 							else:
 								self.screen.addstr(y, x, self.screen_array[y][x][1], curses.color_pair(0))
 						self.screen_array[y][x][0] = False
 					except:
 						# this happens when the terminal size is smaller than the self.screen_array size
-						self.screen.resize(self.height, self.width)
+						self.screen.resize(math.floor(self.height), math.floor(self.width))
 		self.mouse.clear_events()
 		self.screen.refresh()
 		self.clock.update()
