@@ -2,7 +2,6 @@ from . import sprite, shapes, clock
 import math
 class Rect:
 	def __init__(self, window, x=0, y=0, width=1, height=1, direction=(0, 0), speed=(0, 0), char="*", fill=True, color_pair=None, group=None):
-		# x, y is the top left position of Rect
 		self.window = window
 		self.x = x
 		self.y = y
@@ -29,45 +28,45 @@ class Rect:
 	def check_bounds(self):
 		pass
 
+
 	def unrender(self):
-		if self.fill:
-			for y in range(math.floor(self.height)):
-				for x in range(math.floor(self.width)):
-					if 0 <= math.floor(self.x) + x <= self.window.width - 1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
-						is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][1:] == [self.window.char, self.window.color_pair])
-						if not is_changed:
-							is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][0]
-						self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [is_changed, self.window.char, self.window.color_pair]
-		else:
-			for y in range(math.floor(self.height)):
-				if 0 <= math.floor(self.x) <= self.window.width - 1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[math.floor(self.y) + y][math.floor(self.x)] = [True, self.window.char, self.window.color_pair]
-				if 0 <= math.floor(self.x) + math.floor(self.width) <= self.window.width - 1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + math.floor(self.width)] = [True, self.window.char, self.window.color_pair]
-				if (y == 0 or y == math.floor(self.height) - 1) and (0 <= math.floor(self.y) + y <= self.window.height - 1):
-					for x in range(math.floor(self.width)):
-						if 0 <= math.floor(self.x) + x <= self.window.width - 1:
-							self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [True, self.window.char, self.window.color_pair]
-				
+		for y in range(math.floor(self.y), math.floor(self.y + self.height)):
+			if self.fill:
+				self.draw_line(self.x, self.x + self.width - 1, y, self.window.char, self.window.color_pair)
+			else:
+				self.draw_edge(self.x, self.x + self.width - 1, y, self.window.char, self.window.color_pair)
+
+	
+	def draw_line(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
+		for x in range(math.floor(x1), math.floor(x2) + 1):
+			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
+				if not is_changed:
+					is_changed = self.window.screen_array[y][x][0]
+				self.window.screen_array[y][x] = [is_changed, char, color_pair]
+
+	def draw_edge(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
+		if 0 <= math.floor(x1) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			is_changed = not(self.window.screen_array[y][math.floor(x1)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x1)][0]
+			self.window.screen_array[y][math.floor(x1)] = [is_changed, char, color_pair]
+		if 0 <= math.floor(x2) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			is_changed = not(self.window.screen_array[y][math.floor(x2)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x2)][0]
+			self.window.screen_array[y][math.floor(x2)] = [is_changed, char, color_pair]
+
+
 	def render(self):
-		if self.fill:
-			for y in range(math.floor(self.height)):
-				for x in range(math.floor(self.width)):
-					if 0 <= math.floor(self.x) + x <= self.window.width - 1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
-						is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][1:] == [self.char, self.color_pair])
-						if not is_changed:
-							is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][0]
-						self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [is_changed, self.char, self.color_pair]
-		else:
-			for y in range(math.floor(self.height)):
-				if 0 <= math.floor(self.x) <= self.window.width - 1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[math.floor(self.y) + y][math.floor(self.x)] = [True, self.char, self.color_pair]
-				if 0 <= math.floor(self.x) + math.floor(self.width) <= self.window.width - 1 and 0 <= math.floor(self.y) + y <= self.window.height - 1:
-					self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + math.floor(self.width)] = [True, self.char, self.color_pair]
-				if (y == 0 or y == math.floor(self.height) - 1) and (0 <= math.floor(self.y) + y <= self.window.height - 1):
-					for x in range(math.floor(self.width)):
-						if 0 <= math.floor(self.x) + x <= self.window.width - 1:
-							self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [True, self.char, self.color_pair]
+		for y in range(math.floor(self.y), math.floor(self.y + self.height)):
+			if self.fill:
+				self.draw_line(self.x, self.x + self.width - 1, y, self.char, self.color_pair)
+			else:
+				self.draw_edge(self.x, self.x + self.width - 1, y, self.char, self.color_pair)
+
 
 	def check_group_collision(self, others):
 		for obj in others:
@@ -122,9 +121,9 @@ class Triangle:
 
 
 	def render(self):
-		x1, y1 = self.vertices[0][0], self.vertices[0][1]
-		x2, y2 = self.vertices[1][0], self.vertices[1][1]
-		x3, y3 = self.vertices[2][0], self.vertices[2][1]
+		x1, y1 = self.vertices[0]
+		x2, y2 = self.vertices[1]
+		x3, y3 = self.vertices[2]
 
 		if y2 == y3:
 			self.fill_flat_bottom_triangle(x1, y1, x2, y2, x3, y3, self.char, self.color_pair)
@@ -138,15 +137,26 @@ class Triangle:
 
 
 	def draw_line(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
 		for x in range(math.floor(x1), math.floor(x2) + 1):
 			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
-				self.window.screen_array[y][x] = [True, char, color_pair]
+				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
+				if not is_changed:
+					is_changed = self.window.screen_array[y][x][0]
+				self.window.screen_array[y][x] = [is_changed, char, color_pair]
 
 	def draw_edge(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
 		if 0 <= math.floor(x1) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
-			self.window.screen_array[y][math.floor(x1)] = [True, char, color_pair]
+			is_changed = not(self.window.screen_array[y][math.floor(x1)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x1)][0]
+			self.window.screen_array[y][math.floor(x1)] = [is_changed, char, color_pair]
 		if 0 <= math.floor(x2) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
-			self.window.screen_array[y][math.floor(x2)] = [True, char, color_pair]
+			is_changed = not(self.window.screen_array[y][math.floor(x2)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x2)][0]
+			self.window.screen_array[y][math.floor(x2)] = [is_changed, char, color_pair]
 
 
 	def fill_flat_bottom_triangle(self, x1, y1, x2, y2, x3, y3, char, color_pair):
@@ -190,9 +200,9 @@ class Triangle:
 
 
 	def unrender(self):
-		x1, y1 = self.vertices[0][0], self.vertices[0][1]
-		x2, y2 = self.vertices[1][0], self.vertices[1][1]
-		x3, y3 = self.vertices[2][0], self.vertices[2][1]
+		x1, y1 = self.vertices[0]
+		x2, y2 = self.vertices[1]
+		x3, y3 = self.vertices[2]
 		if y2 == y3:
 			self.fill_flat_bottom_triangle(x1, y1, x2, y2, x3, y3, self.window.char, self.window.color_pair)
 		elif y1 == y2:
@@ -254,28 +264,23 @@ class Polygon:
 	def render(self):
 		for y in range(math.floor(self.edges[0][0][1]), math.floor(self.edges[-1][1][1]) + 1):
 			intersections = []
-			intersected_edges = []
+			intersected_edges = {}
 			for e in self.edges:
 				if e[0][1] <= y <= e[1][1]:
 					if e[0][1] != e[1][1]:
-						intersected_edges.append(e)
 						dx = (e[1][0] - e[0][0]) / (e[1][1] - e[0][1]) * (y - e[0][1])
 						x = math.floor(e[0][0] + dx)
-						if x not in intersections:
+						intersected_edge = intersected_edges.get(x, False)
+						if intersected_edge:
+							if (intersected_edge[1][1] > y and e[1][1] > y) or (intersected_edge[0][1] < y and e[0][1] < y):
+								intersections.append(x)
+						else:
+							intersected_edges[x] = e
 							intersections.append(x)
 					else:
 						x = sorted([e[0][0], e[1][0]])
 						self.draw_line(x[0], x[1], y, self.char, self.color_pair)
 
-			doubles = []
-			for x in intersections:
-				vertex_intersections = []
-				for e in intersected_edges:
-					if (x == math.floor(e[0][0]) and y == math.floor(e[0][1])) or (x == math.floor(e[1][0]) and y == math.floor(e[1][1])):
-						vertex_intersections.append(e)
-				if len(vertex_intersections) == 2 and ((vertex_intersections[0][1][1] > y and vertex_intersections[1][1][1] > y) or (vertex_intersections[0][0][1] < y and vertex_intersections[1][0][1]) < y):
-					doubles.append(x)
-			intersections.extend(doubles)
 			intersections.sort()
 			for i in range(0, len(intersections), 2):
 				if self.fill:
@@ -283,17 +288,27 @@ class Polygon:
 				else:
 					self.draw_edge(intersections[i], intersections[i + 1], y, self.char, self.color_pair)
 
-
 	def draw_line(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
 		for x in range(math.floor(x1), math.floor(x2) + 1):
 			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
-				self.window.screen_array[y][x] = [True, char, color_pair]
+				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
+				if not is_changed:
+					is_changed = self.window.screen_array[y][x][0]
+				self.window.screen_array[y][x] = [is_changed, char, color_pair]
 
 	def draw_edge(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
 		if 0 <= math.floor(x1) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
-			self.window.screen_array[y][math.floor(x1)] = [True, char, color_pair]
+			is_changed = not(self.window.screen_array[y][math.floor(x1)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x1)][0]
+			self.window.screen_array[y][math.floor(x1)] = [is_changed, char, color_pair]
 		if 0 <= math.floor(x2) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
-			self.window.screen_array[y][math.floor(x2)] = [True, char, color_pair]
+			is_changed = not(self.window.screen_array[y][math.floor(x2)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x2)][0]
+			self.window.screen_array[y][math.floor(x2)] = [is_changed, char, color_pair]
 
 	def update(self, dt):
 		self.unrender()
@@ -311,33 +326,30 @@ class Polygon:
 	def unrender(self):
 		for y in range(math.floor(self.edges[0][0][1]), math.floor(self.edges[-1][1][1]) + 1):
 			intersections = []
-			intersected_edges = []
+			intersected_edges = {}
 			for e in self.edges:
 				if e[0][1] <= y <= e[1][1]:
 					if e[0][1] != e[1][1]:
-						intersected_edges.append(e)
 						dx = (e[1][0] - e[0][0]) / (e[1][1] - e[0][1]) * (y - e[0][1])
 						x = math.floor(e[0][0] + dx)
-						if x not in intersections:
+						intersected_edge = intersected_edges.get(x, False)
+						if intersected_edge:
+							if (intersected_edge[1][1] > y and e[1][1] > y) or (intersected_edge[0][1] < y and e[0][1] < y):
+								intersections.append(x)
+						else:
+							intersected_edges[x] = e
 							intersections.append(x)
 					else:
 						x = sorted([e[0][0], e[1][0]])
 						self.draw_line(x[0], x[1], y, self.window.char, self.window.color_pair)
-			doubles = []
-			for x in intersections:
-				vertex_intersections = []
-				for e in intersected_edges:
-					if (x == math.floor(e[0][0]) and y == math.floor(e[0][1])) or (x == math.floor(e[1][0]) and y == math.floor(e[1][1])):
-						vertex_intersections.append(e)
-				if len(vertex_intersections) == 2 and ((vertex_intersections[0][1][1] > y and vertex_intersections[1][1][1] > y) or (vertex_intersections[0][0][1] < y and vertex_intersections[1][0][1]) < y):
-					doubles.append(x)
-			intersections.extend(doubles)
+
 			intersections.sort()
 			for i in range(0, len(intersections), 2):
 				if self.fill:
 					self.draw_line(intersections[i], intersections[i + 1], y, self.window.char, self.window.color_pair)
 				else:
 					self.draw_edge(intersections[i], intersections[i + 1], y, self.window.char, self.window.color_pair)
+
 
 
 	def check_group_collision(self, others):
@@ -369,10 +381,12 @@ class Polygon:
 		
 
 class Circle:
-	def __init__(self, window, center=(0, 0), radius=1, char="*", fill=True, color_pair=None, group=None):
+	def __init__(self, window, center=(0, 0), radius=1, direction=(0, 0), speed=(0, 0), char="*", fill=True, color_pair=None, group=None):
 		self.window = window
 		self.center = tuple(center)
 		self.radius = radius
+		self.speed = tuple(speed)
+		self.direction = tuple(direction)
 		self.char = char
 		self.fill = fill
 		if color_pair != None:
@@ -385,17 +399,103 @@ class Circle:
 
 	def update(self, dt):
 		self.unrender()
-		self.center = (self.center[i] + self.direction[i] * self.speed[i] * dt for i in range(len(self.center)))
+		self.center = tuple(self.center[i] + self.direction[i] * self.speed[i] * dt for i in range(len(self.center)))
 		self.check_bounds()
 
-	def check_bounds(self, dt):
+	def check_bounds(self):
 		pass
 
 	def unrender(self):
-		pass
+		x = self.center[0]
+		y = self.center[1]
+		r = self.radius
+		p = 0
+		q = r
+		d = 3 - 2 * r
+		if self.fill:
+			self.draw_line(x - 2 * p, x + 2 * p, y + q, self.window.char, self.window.color_pair)
+			self.draw_line(x - 2 * p, x + 2 * p, y - q, self.window.char, self.window.color_pair)
+			self.draw_line(x - 2 * q, x + 2 * q, y + p, self.window.char, self.window.color_pair)
+			self.draw_line(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
+		else:
+			self.draw_edge(x - 2 * p, x + 2 * p, y + q, self.window.char, self.window.color_pair)
+			self.draw_edge(x - 2 * p, x + 2 * p, y - q, self.window.char, self.window.color_pair)
+			self.draw_edge(x - 2 * q, x + 2 * q, y + p, self.window.char, self.window.color_pair)
+			self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
+		while p <= q:
+			p += 1
+			if d <= 0:
+				d += 4 * p + 6
+			else:
+				q -= 1
+				d += 4 * (p - q) + 10
+			if self.fill:
+				self.draw_line(x - 2 * p, x + 2 * p, y + q, self.window.char, self.window.color_pair)
+				self.draw_line(x - 2 * p, x + 2 * p, y - q, self.window.char, self.window.color_pair)
+				self.draw_line(x - 2 * q, x + 2 * q, y + p, self.window.char, self.window.color_pair)
+				self.draw_line(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
+			else:
+				self.draw_edge(x - 2 * p, x + 2 * p, y + q, self.window.char, self.window.color_pair)
+				self.draw_edge(x - 2 * p, x + 2 * p, y - q, self.window.char, self.window.color_pair)
+				self.draw_edge(x - 2 * q, x + 2 * q, y + p, self.window.char, self.window.color_pair)
+				self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
 
 	def render(self):
-		pass
+		x = self.center[0]
+		y = self.center[1]
+		r = self.radius
+		p = 0
+		q = r
+		d = 3 - 2 * r
+		if self.fill:
+			self.draw_line(x - 2 * p, x + 2 * p, y + q, self.char, self.color_pair)
+			self.draw_line(x - 2 * p, x + 2 * p, y - q, self.char, self.color_pair)
+			self.draw_line(x - 2 * q, x + 2 * q, y + p, self.char, self.color_pair)
+			self.draw_line(x - 2 * q, x + 2 * q, y - p, self.char, self.color_pair)
+		else:
+			self.draw_edge(x - 2 * p, x + 2 * p, y + q, self.char, self.color_pair)
+			self.draw_edge(x - 2 * p, x + 2 * p, y - q, self.char, self.color_pair)
+			self.draw_edge(x - 2 * q, x + 2 * q, y + p, self.char, self.color_pair)
+			self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.char, self.color_pair)
+		while p <= q:
+			p += 1
+			if d <= 0:
+				d += 4 * p + 6
+			else:
+				q -= 1
+				d += 4 * (p - q) + 10
+			if self.fill:
+				self.draw_line(x - 2 * p, x + 2 * p, y + q, self.char, self.color_pair)
+				self.draw_line(x - 2 * p, x + 2 * p, y - q, self.char, self.color_pair)
+				self.draw_line(x - 2 * q, x + 2 * q, y + p, self.char, self.color_pair)
+				self.draw_line(x - 2 * q, x + 2 * q, y - p, self.char, self.color_pair)
+			else:
+				self.draw_edge(x - 2 * p, x + 2 * p, y + q, self.char, self.color_pair)
+				self.draw_edge(x - 2 * p, x + 2 * p, y - q, self.char, self.color_pair)
+				self.draw_edge(x - 2 * q, x + 2 * q, y + p, self.char, self.color_pair)
+				self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.char, self.color_pair)
+				
+	def draw_line(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
+		for x in range(math.floor(x1), math.floor(x2) + 1):
+			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
+				if not is_changed:
+					is_changed = self.window.screen_array[y][x][0]
+				self.window.screen_array[y][x] = [is_changed, char, color_pair]
+
+	def draw_edge(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
+		if 0 <= math.floor(x1) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			is_changed = not(self.window.screen_array[y][math.floor(x1)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x1)][0]
+			self.window.screen_array[y][math.floor(x1)] = [is_changed, char, color_pair]
+		if 0 <= math.floor(x2) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			is_changed = not(self.window.screen_array[y][math.floor(x2)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x2)][0]
+			self.window.screen_array[y][math.floor(x2)] = [is_changed, char, color_pair]
 
 	def check_group_collision(self, others):
 		pass
@@ -421,5 +521,174 @@ class Circle:
 		else:
 			self.color_pair = color_pair
 
+
+
+
 class Ellipse:
-	pass
+	def __init__(self, window, center=(0, 0), radius=(1, 1), direction=(0, 0), speed=(0, 0), char="*", fill=True, color_pair=None, group=None):
+		self.window = window
+		self.center = tuple(center)
+		self.radius = tuple(radius)
+		self.speed = tuple(speed)
+		self.direction = tuple(direction)
+		self.char = char
+		self.fill = fill
+		if color_pair != None:
+			self.color_pair = tuple(color_pair)
+		else:
+			self.color_pair = color_pair
+		self.group = group
+		if type(self.group) == list:
+			self.group.append(self)
+
+	def update(self, dt):
+		self.unrender()
+		self.center = tuple(self.center[i] + self.direction[i] * self.speed[i] * dt for i in range(len(self.center)))
+		self.check_bounds()
+
+	def check_bounds(self):
+		pass
+
+	def unrender(self):
+		x = self.center[0]
+		y = self.center[1]
+		rx, ry = self.radius
+		p = 0
+		q = ry
+		d1 = (ry * ry) - (rx * rx * ry) + (0.25 * rx * rx)
+		dx = 2 * ry * ry * p
+		dy = 2 * rx * rx * q
+
+		while dx < dy:
+			if self.fill:
+				self.draw_line(x - p, x + p, y + q, self.window.char, self.window.color_pair)
+				self.draw_line(x - p, x + p, y - q, self.window.char, self.window.color_pair)
+			else:
+				self.draw_edge(x - p, x + p, y + q, self.window.char, self.window.color_pair)
+				self.draw_edge(x - p, x + p, y - q, self.window.char, self.window.color_pair)
+			if d1 < 0:
+				p += 1
+				dx += 2 * ry * ry
+				d1 += dx + ry * ry
+			else:
+				p += 1
+				q -= 1
+				dx += 2 * ry * ry
+				dy -= 2 * rx * rx
+				d1 += dx - dy + ry * ry
+
+		d2 = ((ry * ry) * ((p + 0.5) * (p + 0.5))) + ((rx * rx) * ((q - 1) * (q - 1))) - (rx * rx * ry * ry)
+
+		while q >= 0:
+			if self.fill:
+				self.draw_line(x - p, x + p, y + q, self.window.char, self.window.color_pair)
+				self.draw_line(x - p, x + p, y - q, self.window.char, self.window.color_pair)
+			else:
+				self.draw_edge(x - p, x + p, y + q, self.window.char, self.window.color_pair)
+				self.draw_edge(x - p, x + p, y - q, self.window.char, self.window.color_pair)
+			if d2 > 0:
+				q -= 1
+				dy -= 2 * rx * rx
+				d2 += rx * rx - dy
+			else:
+				p += 1
+				q -= 1
+				dx += 2 * ry * ry
+				dy -= 2 * rx * rx
+				d2 += dx - dy + rx * rx
+				self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
+
+
+	def render(self):
+		x = self.center[0]
+		y = self.center[1]
+		rx, ry = self.radius
+		p = 0
+		q = ry
+		d1 = (ry * ry) - (rx * rx * ry) + (0.25 * rx * rx)
+		dx = 2 * ry * ry * p
+		dy = 2 * rx * rx * q
+
+		while dx < dy:
+			if self.fill:
+				self.draw_line(x - p, x + p, y + q, self.char, self.color_pair)
+				self.draw_line(x - p, x + p, y - q, self.char, self.color_pair)
+			else:
+				self.draw_edge(x - p, x + p, y + q, self.char, self.color_pair)
+				self.draw_edge(x - p, x + p, y - q, self.char, self.color_pair)
+			if d1 < 0:
+				p += 1
+				dx += 2 * ry * ry
+				d1 += dx + ry * ry
+			else:
+				p += 1
+				q -= 1
+				dx += 2 * ry * ry
+				dy -= 2 * rx * rx
+				d1 += dx - dy + ry * ry
+
+		d2 = ((ry * ry) * ((p + 0.5) * (p + 0.5))) + ((rx * rx) * ((q - 1) * (q - 1))) - (rx * rx * ry * ry)
+		
+		while q >= 0:
+			if self.fill:
+				self.draw_line(x - p, x + p, y + q, self.char, self.color_pair)
+				self.draw_line(x - p, x + p, y - q, self.char, self.color_pair)
+			else:
+				self.draw_edge(x - p, x + p, y + q, self.char, self.color_pair)
+				self.draw_edge(x - p, x + p, y - q, self.char, self.color_pair)
+			if d2 > 0:
+				q -= 1
+				dy -= 2 * rx * rx
+				d2 += rx * rx - dy
+			else:
+				p += 1
+				q -= 1
+				dx += 2 * ry * ry
+				dy -= 2 * rx * rx
+				d2 += dx - dy + rx * rx
+				
+	def draw_line(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
+		for x in range(math.floor(x1), math.floor(x2) + 1):
+			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
+				if not is_changed:
+					is_changed = self.window.screen_array[y][x][0]
+				self.window.screen_array[y][x] = [is_changed, char, color_pair]
+
+	def draw_edge(self, x1, x2, y, char, color_pair):
+		y = math.floor(y)
+		if 0 <= math.floor(x1) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			is_changed = not(self.window.screen_array[y][math.floor(x1)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x1)][0]
+			self.window.screen_array[y][math.floor(x1)] = [is_changed, char, color_pair]
+		if 0 <= math.floor(x2) <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			is_changed = not(self.window.screen_array[y][math.floor(x2)][1:] == [char, color_pair])
+			if not is_changed:
+				is_changed = self.window.screen_array[y][math.floor(x2)][0]
+			self.window.screen_array[y][math.floor(x2)] = [is_changed, char, color_pair]
+
+	def check_group_collision(self, others):
+		pass
+
+	def is_collided_with(self, other):
+		pass
+
+	def destroy(self):
+		self.unrender()
+		if self.group:
+			self.group.remove(self)
+
+
+	def update_shape(self, **kwargs):
+		self.unrender()
+		self.center = tuple(kwargs.get("center", self.center))
+		self.radius = tuple(kwargs.get("radius", self.radius))
+		self.char = kwargs.get("char", self.char)
+		self.fill = kwargs.get("fill", self.fill)
+		color_pair = kwargs.get("color_pair", self.color_pair)
+		if color_pair != None:
+			self.color_pair = tuple(color_pair)
+		else:
+			self.color_pair = color_pair
