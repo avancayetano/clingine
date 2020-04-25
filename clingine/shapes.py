@@ -39,8 +39,10 @@ class Rect:
 	
 	def draw_line(self, x1, x2, y, char, color_pair):
 		y = math.floor(y)
+		if x1 > x2:
+			x1, x2 = x2, x1
 		for x in range(math.floor(x1), math.floor(x2) + 1):
-			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			if 0 <= x <= self.window.width - 2 and 0 <= y <= self.window.height - 2:
 				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
 				if not is_changed:
 					is_changed = self.window.screen_array[y][x][0]
@@ -84,8 +86,6 @@ class Rect:
 		if self.group:
 			self.group.remove(self)
 
-	def rotate(self):
-		pass
 
 	def update_shape(self, **kwargs):
 		self.unrender()
@@ -106,7 +106,8 @@ class Rect:
 class Triangle:
 	def __init__(self, window, vertices=(), direction=(0, 0), speed=(0, 0), char="*", fill=True, color_pair=None, group=None):
 		self.window = window
-		self.vertices = tuple(tuple(v) for v in sorted(list(vertices), key=lambda x: (x[1], x[0])))
+		self.vertices = self.arrange_vertices(vertices)
+		self.center = self.get_center(self.vertices)
 		self.direction = tuple(direction)
 		self.speed = tuple(speed)
 		self.fill = fill
@@ -118,6 +119,16 @@ class Triangle:
 		self.group = group
 		if type(self.group) == list:
 			self.group.append(self)
+
+	def arrange_vertices(self, vertices):
+		return tuple(tuple(v) for v in sorted(list(vertices), key=lambda x: (x[1], x[0])))
+
+	def get_center(self, vertices):
+		vertices = sorted(list(vertices), key=lambda x: (x[0]))
+		x = (vertices[0][0] + vertices[2][0]) / 2
+		vertices = sorted(list(vertices), key=lambda x: (x[1]))
+		y = (vertices[0][1] + vertices[2][1]) / 2
+		return (x, y)
 
 
 	def render(self):
@@ -138,8 +149,10 @@ class Triangle:
 
 	def draw_line(self, x1, x2, y, char, color_pair):
 		y = math.floor(y)
+		if x1 > x2:
+			x1, x2 = x2, x1
 		for x in range(math.floor(x1), math.floor(x2) + 1):
-			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			if 0 <= x <= self.window.width - 2 and 0 <= y <= self.window.height - 2:
 				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
 				if not is_changed:
 					is_changed = self.window.screen_array[y][x][0]
@@ -191,7 +204,7 @@ class Triangle:
 		new_vertices = []
 		for x, y in self.vertices:
 			new_vertices.append((x + self.direction[0] * self.speed[0] * dt, y + self.direction[1] * self.speed[1] * dt))
-
+		self.center = tuple(self.center[i] + self.direction[i] * self.speed[i] * dt for i in range(len(self.center)))
 		self.vertices = tuple(new_vertices)
 		self.check_bounds()
 
@@ -227,12 +240,30 @@ class Triangle:
 		if self.group:
 			self.group.remove(self)
 
-	def rotate(self):
-		pass
+	def rotate(self, dt, angle, point=None, clockwise=False):
+		self.unrender()
+		angle *= dt
+		if point == None:
+			point = self.center
+			in_place = True
+		new_vertices = []
+		for v in self.vertices:
+			if clockwise:
+				x = math.cos(angle) * (v[0] - point[0]) - math.sin(angle) * (v[1] - point[1]) + point[0]
+				y = math.sin(angle) * (v[0] - point[0]) + math.cos(angle) * (v[1] - point[1]) + point[1]
+			else:
+				x = math.cos(angle) * (v[0] - point[0]) - math.sin(angle) * (point[1] - v[1]) + point[0]
+				y = -math.sin(angle) * (v[0] - point[0]) - math.cos(angle) * (point[1] - v[1]) + point[1]
+			new_vertices.append((x, y))
+		self.vertices = self.arrange_vertices(new_vertices)
+		if not in_place:
+			self.center = self.get_center(self.vertices)
+
+
 
 	def update_shape(self, **kwargs):
 		self.unrender()
-		self.vertices = tuple(tuple(v) for v in sorted(list(kwargs.get("vertices", self.vertices)), key=lambda x: (x[1], x[0])))
+		self.vertices = self.arrange_vertices(kwargs.get("vertices", self.vertices))
 		self.fill = kwargs.get("fill", self.fill)
 		self.char = kwargs.get("char", self.char)
 		color_pair = kwargs.get("color_pair", self.color_pair)
@@ -247,8 +278,8 @@ class Polygon:
 	def __init__(self, window, vertices=(), direction=(0, 0), speed=(0, 0), char="*", fill=True, color_pair=None, group=None):
 		self.window = window
 		self.vertices = tuple(tuple(v) for v in vertices)
-		self.edges = tuple(sorted([tuple(sorted([self.vertices[v], self.vertices[(v + 1) % len(self.vertices)]], key=lambda v: v[1])) 
-			for v in range(len(self.vertices))], key=lambda e: min(e[0][1], e[1][1])))
+		self.edges = self.arrange_edges(self.vertices)
+		self.center = self.get_center(self.vertices)
 		self.direction = tuple(direction)
 		self.speed = tuple(speed)
 		self.fill = fill
@@ -260,6 +291,18 @@ class Polygon:
 		self.group = group
 		if type(self.group) == list:
 			self.group.append(self)
+
+	def arrange_edges(self, vertices):
+		return tuple(sorted([tuple(sorted([vertices[v], vertices[(v + 1) % len(vertices)]], key=lambda v: v[1])) 
+			for v in range(len(vertices))], key=lambda e: min(e[0][1], e[1][1])))
+
+	def get_center(self, vertices):
+		vertices = sorted(list(vertices), key=lambda x: (x[0]))
+		x = (vertices[0][0] + vertices[2][0]) / 2
+		vertices = sorted(list(vertices), key=lambda x: (x[1]))
+		y = (vertices[0][1] + vertices[2][1]) / 2
+		return (x, y)
+
 
 	def render(self):
 		for y in range(math.floor(self.edges[0][0][1]), math.floor(self.edges[-1][1][1]) + 1):
@@ -290,8 +333,10 @@ class Polygon:
 
 	def draw_line(self, x1, x2, y, char, color_pair):
 		y = math.floor(y)
+		if x1 > x2:
+			x1, x2 = x2, x1
 		for x in range(math.floor(x1), math.floor(x2) + 1):
-			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			if 0 <= x <= self.window.width - 2 and 0 <= y <= self.window.height - 2:
 				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
 				if not is_changed:
 					is_changed = self.window.screen_array[y][x][0]
@@ -315,9 +360,9 @@ class Polygon:
 		new_vertices = []
 		for x, y in self.vertices:
 			new_vertices.append((x + self.direction[0] * self.speed[0] * dt, y + self.direction[1] * self.speed[1] * dt))
+		self.center = tuple(self.center[i] + self.direction[i] * self.speed[i] * dt for i in range(len(self.center)))
 		self.vertices = tuple(new_vertices)
-		self.edges = tuple(sorted([tuple(sorted([self.vertices[v], self.vertices[(v + 1) % len(self.vertices)]], key=lambda v: v[1])) 
-			for v in range(len(self.vertices))], key=lambda e: min(e[0][1], e[1][1])))
+		self.edges = self.arrange_edges(self.vertices)
 		self.check_bounds()
 
 	def check_bounds(self):
@@ -363,14 +408,31 @@ class Polygon:
 		if self.group:
 			self.group.remove(self)
 
-	def rotate(self):
-		pass
+	def rotate(self, dt, angle, point=None, clockwise=False):
+		self.unrender()
+		angle *= dt
+		if point == None:
+			point = self.center
+			in_place = True
+		new_vertices = []
+		for v in self.vertices:
+			if clockwise:
+				x = math.cos(angle) * (v[0] - point[0]) - math.sin(angle) * (v[1] - point[1]) + point[0]
+				y = math.sin(angle) * (v[0] - point[0]) + math.cos(angle) * (v[1] - point[1]) + point[1]
+			else:
+				x = math.cos(angle) * (v[0] - point[0]) - math.sin(angle) * (point[1] - v[1]) + point[0]
+				y = -math.sin(angle) * (v[0] - point[0]) - math.cos(angle) * (point[1] - v[1]) + point[1]
+			new_vertices.append((x, y))
+		self.vertices = tuple(new_vertices)
+		self.edges = self.arrange_edges(self.vertices)
+		if not in_place:
+			self.center = self.get_center(self.vertices)
 
 	def update_shape(self, **kwargs):
 		self.unrender()
 		self.vertices = tuple(tuple(v) for v in kwargs.get("vertices", self.vertices))
-		self.edges = tuple(sorted([tuple(sorted([self.vertices[v], self.vertices[(v + 1) % len(self.vertices)]], key=lambda v: v[1])) 
-			for v in range(len(self.vertices))], key=lambda e: min(e[0][1], e[1][1])))
+		self.edges = self.arrange_edges(self.vertices)
+		self.center = self.get_center(self.vertices)
 		self.char = kwargs.get("char", self.char)
 		self.fill = kwargs.get("fill", self.fill)
 		color_pair = kwargs.get("color_pair", self.color_pair)
@@ -408,77 +470,105 @@ class Circle:
 	def unrender(self):
 		x = self.center[0]
 		y = self.center[1]
-		r = self.radius
+		rx, ry = (self.radius * 2, self.radius) 
 		p = 0
-		q = r
-		d = 3 - 2 * r
-		if self.fill:
-			self.draw_line(x - 2 * p, x + 2 * p, y + q, self.window.char, self.window.color_pair)
-			self.draw_line(x - 2 * p, x + 2 * p, y - q, self.window.char, self.window.color_pair)
-			self.draw_line(x - 2 * q, x + 2 * q, y + p, self.window.char, self.window.color_pair)
-			self.draw_line(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
-		else:
-			self.draw_edge(x - 2 * p, x + 2 * p, y + q, self.window.char, self.window.color_pair)
-			self.draw_edge(x - 2 * p, x + 2 * p, y - q, self.window.char, self.window.color_pair)
-			self.draw_edge(x - 2 * q, x + 2 * q, y + p, self.window.char, self.window.color_pair)
-			self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
-		while p <= q:
-			p += 1
-			if d <= 0:
-				d += 4 * p + 6
-			else:
-				q -= 1
-				d += 4 * (p - q) + 10
+		q = ry
+		d1 = (ry * ry) - (rx * rx * ry) + (0.25 * rx * rx)
+		dx = 2 * ry * ry * p
+		dy = 2 * rx * rx * q
+
+		while dx < dy:
 			if self.fill:
-				self.draw_line(x - 2 * p, x + 2 * p, y + q, self.window.char, self.window.color_pair)
-				self.draw_line(x - 2 * p, x + 2 * p, y - q, self.window.char, self.window.color_pair)
-				self.draw_line(x - 2 * q, x + 2 * q, y + p, self.window.char, self.window.color_pair)
-				self.draw_line(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
+				self.draw_line(x - p, x + p, y + q, self.window.char, self.window.color_pair)
+				self.draw_line(x - p, x + p, y - q, self.window.char, self.window.color_pair)
 			else:
-				self.draw_edge(x - 2 * p, x + 2 * p, y + q, self.window.char, self.window.color_pair)
-				self.draw_edge(x - 2 * p, x + 2 * p, y - q, self.window.char, self.window.color_pair)
-				self.draw_edge(x - 2 * q, x + 2 * q, y + p, self.window.char, self.window.color_pair)
-				self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.window.char, self.window.color_pair)
+				self.draw_edge(x - p, x + p, y + q, self.window.char, self.window.color_pair)
+				self.draw_edge(x - p, x + p, y - q, self.window.char, self.window.color_pair)
+			if d1 < 0:
+				p += 1
+				dx += 2 * ry * ry
+				d1 += dx + ry * ry
+			else:
+				p += 1
+				q -= 1
+				dx += 2 * ry * ry
+				dy -= 2 * rx * rx
+				d1 += dx - dy + ry * ry
+
+		d2 = ((ry * ry) * ((p + 0.5) * (p + 0.5))) + ((rx * rx) * ((q - 1) * (q - 1))) - (rx * rx * ry * ry)
+		
+		while q >= 0:
+			if self.fill:
+				self.draw_line(x - p, x + p, y + q, self.window.char, self.window.color_pair)
+				self.draw_line(x - p, x + p, y - q, self.window.char, self.window.color_pair)
+			else:
+				self.draw_edge(x - p, x + p, y + q, self.window.char, self.window.color_pair)
+				self.draw_edge(x - p, x + p, y - q, self.window.char, self.window.color_pair)
+			if d2 > 0:
+				q -= 1
+				dy -= 2 * rx * rx
+				d2 += rx * rx - dy
+			else:
+				p += 1
+				q -= 1
+				dx += 2 * ry * ry
+				dy -= 2 * rx * rx
+				d2 += dx - dy + rx * rx
 
 	def render(self):
 		x = self.center[0]
 		y = self.center[1]
-		r = self.radius
+		rx, ry = (self.radius * 2, self.radius)
 		p = 0
-		q = r
-		d = 3 - 2 * r
-		if self.fill:
-			self.draw_line(x - 2 * p, x + 2 * p, y + q, self.char, self.color_pair)
-			self.draw_line(x - 2 * p, x + 2 * p, y - q, self.char, self.color_pair)
-			self.draw_line(x - 2 * q, x + 2 * q, y + p, self.char, self.color_pair)
-			self.draw_line(x - 2 * q, x + 2 * q, y - p, self.char, self.color_pair)
-		else:
-			self.draw_edge(x - 2 * p, x + 2 * p, y + q, self.char, self.color_pair)
-			self.draw_edge(x - 2 * p, x + 2 * p, y - q, self.char, self.color_pair)
-			self.draw_edge(x - 2 * q, x + 2 * q, y + p, self.char, self.color_pair)
-			self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.char, self.color_pair)
-		while p <= q:
-			p += 1
-			if d <= 0:
-				d += 4 * p + 6
-			else:
-				q -= 1
-				d += 4 * (p - q) + 10
+		q = ry
+		d1 = (ry * ry) - (rx * rx * ry) + (0.25 * rx * rx)
+		dx = 2 * ry * ry * p
+		dy = 2 * rx * rx * q
+
+		while dx < dy:
 			if self.fill:
-				self.draw_line(x - 2 * p, x + 2 * p, y + q, self.char, self.color_pair)
-				self.draw_line(x - 2 * p, x + 2 * p, y - q, self.char, self.color_pair)
-				self.draw_line(x - 2 * q, x + 2 * q, y + p, self.char, self.color_pair)
-				self.draw_line(x - 2 * q, x + 2 * q, y - p, self.char, self.color_pair)
+				self.draw_line(x - p, x + p, y + q, self.char, self.color_pair)
+				self.draw_line(x - p, x + p, y - q, self.char, self.color_pair)
 			else:
-				self.draw_edge(x - 2 * p, x + 2 * p, y + q, self.char, self.color_pair)
-				self.draw_edge(x - 2 * p, x + 2 * p, y - q, self.char, self.color_pair)
-				self.draw_edge(x - 2 * q, x + 2 * q, y + p, self.char, self.color_pair)
-				self.draw_edge(x - 2 * q, x + 2 * q, y - p, self.char, self.color_pair)
+				self.draw_edge(x - p, x + p, y + q, self.char, self.color_pair)
+				self.draw_edge(x - p, x + p, y - q, self.char, self.color_pair)
+			if d1 < 0:
+				p += 1
+				dx += 2 * ry * ry
+				d1 += dx + ry * ry
+			else:
+				p += 1
+				q -= 1
+				dx += 2 * ry * ry
+				dy -= 2 * rx * rx
+				d1 += dx - dy + ry * ry
+
+		d2 = ((ry * ry) * ((p + 0.5) * (p + 0.5))) + ((rx * rx) * ((q - 1) * (q - 1))) - (rx * rx * ry * ry)
+		
+		while q >= 0:
+			if self.fill:
+				self.draw_line(x - p, x + p, y + q, self.char, self.color_pair)
+				self.draw_line(x - p, x + p, y - q, self.char, self.color_pair)
+			else:
+				self.draw_edge(x - p, x + p, y + q, self.char, self.color_pair)
+				self.draw_edge(x - p, x + p, y - q, self.char, self.color_pair)
+			if d2 > 0:
+				q -= 1
+				dy -= 2 * rx * rx
+				d2 += rx * rx - dy
+			else:
+				p += 1
+				q -= 1
+				dx += 2 * ry * ry
+				dy -= 2 * rx * rx
+				d2 += dx - dy + rx * rx
 				
 	def draw_line(self, x1, x2, y, char, color_pair):
 		y = math.floor(y)
+		if x1 > x2:
+			x1, x2 = x2, x1
 		for x in range(math.floor(x1), math.floor(x2) + 1):
-			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			if 0 <= x <= self.window.width - 2 and 0 <= y <= self.window.height - 2:
 				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
 				if not is_changed:
 					is_changed = self.window.screen_array[y][x][0]
@@ -649,8 +739,10 @@ class Ellipse:
 				
 	def draw_line(self, x1, x2, y, char, color_pair):
 		y = math.floor(y)
+		if x1 > x2:
+			x1, x2 = x2, x1
 		for x in range(math.floor(x1), math.floor(x2) + 1):
-			if 0 <= x <= self.window.width - 1 and 0 <= y <= self.window.height - 1:
+			if 0 <= x <= self.window.width - 2 and 0 <= y <= self.window.height - 2:
 				is_changed = not(self.window.screen_array[y][x][1:] == [char, color_pair])
 				if not is_changed:
 					is_changed = self.window.screen_array[y][x][0]
@@ -692,3 +784,4 @@ class Ellipse:
 			self.color_pair = tuple(color_pair)
 		else:
 			self.color_pair = color_pair
+

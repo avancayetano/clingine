@@ -17,10 +17,9 @@ class GameWindow(clingine.window.Window):
 
 		# self.polygon = clingine.shapes.Polygon(self, vertices=((self.width // 2, 0), (1, self.height // 2), 
 		# 	(self.width // 4, self.height - 2), (self.width - self.width // 4 - 1, self.height - 2), (self.width - 2, self.height // 2)), 
-		# 	direction=(1, 0), speed=(10, 0), char="*", color_pair=((255, 255, 255), (0, 0, 0)))
+		# 	direction=(0, 0), speed=(10, 0), char="*", color_pair=((255, 255, 255), (0, 0, 0)))
 		# def __init__(self, window, center=(0, 0), radius=1, char="*", fill=True, color_pair=None, group=None):
-		# self.circle = clingine.shapes.Circle(self, center=(self.width // 2, self.height // 2), radius=10, direction=(1, 0), speed=(10, 0),
-		# 	char=".", fill=False, color_pair=((255, 255, 255), (0, 0, 0)))
+		# self.circle = clingine.shapes.Circle(self, center=(self.width // 2, 10), radius=5, direction=(1, 0), speed=(10, 0), fill=True, color_pair=((255, 255, 255), (0, 0, 0)))
 		# self.triangle = clingine.shapes.Triangle(self, vertices=((0, 0), (self.width // 2, self.height), (self.width, 0)))
 		# def __init__(self, window, vertices=(), direction=(0, 0), speed=(0, 0), char="*", fill=True, color_pair=None, group=None):
 		# self.polygon = clingine.shapes.Polygon(self, vertices=((0, self.height - 2), (self.width // 5, 0), (self.width // 5 + 15, 0), 
@@ -28,9 +27,11 @@ class GameWindow(clingine.window.Window):
 		# 	direction=(0, 0), speed=(0, 0), char="*", color_pair=((255, 255, 255), (0, 0, 0)))
 		# def __init__(self, window, vertices=(), direction=(0, 0), speed=(0, 0), char="*", color_pair=None, group=None):
 		# def __init__(self, window, center=(0, 0), radius=(1, 1), direction=(0, 0), speed=(0, 0), char="*", fill=True, color_pair=None, group=None):
-		self.ellipse = clingine.shapes.Ellipse(self, center=(self.width // 2, self.height // 2), radius=(40, 10), direction=(1, 0), speed=(10, 0))
+		# self.ellipse = clingine.shapes.Ellipse(self, center=(self.width // 2, self.height - 12), radius=(20, 10), direction=(1, 0), speed=(10, 0))
 
 	def run(self):
+		import math
+		angle = 0
 		while self.running:
 			dt = self.clock.get_dt()
 			clicked = self.mouse.get_clicked()
@@ -55,16 +56,16 @@ class GameWindow(clingine.window.Window):
 			# for rect in self.rects:
 			# 	rect.update(dt)
 			# 	rect.render()
-			# self.player.update(dt)
-			# self.player.render()
-			# self.circle.update(dt)
-			# self.circle.render()
 			# self.polygon.update(dt)
+			# self.polygon.rotate(dt, math.pi / 4, clockwise=True)
 			# self.polygon.render()
 			# self.triangle.update(dt)
+			# self.triangle.rotate(dt, math.pi / 4)
+			# print(self.triangle.center)
+			# print(self.triangle.vertices)
 			# self.triangle.render()
-			self.ellipse.update(dt)
-			self.ellipse.render()
+
+
 			self.update(self.fps)
 		return
 
