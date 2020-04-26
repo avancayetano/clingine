@@ -125,9 +125,9 @@ class Triangle:
 
 	def get_center(self, vertices):
 		vertices = sorted(list(vertices), key=lambda x: (x[0]))
-		x = (vertices[0][0] + vertices[2][0]) / 2
+		x = (vertices[0][0] + vertices[-1][0]) / 2
 		vertices = sorted(list(vertices), key=lambda x: (x[1]))
-		y = (vertices[0][1] + vertices[2][1]) / 2
+		y = (vertices[0][1] + vertices[-1][1]) / 2
 		return (x, y)
 
 
@@ -243,6 +243,7 @@ class Triangle:
 	def rotate(self, dt, angle, point=None, clockwise=False):
 		self.unrender()
 		angle *= dt
+		in_place = False
 		if point == None:
 			point = self.center
 			in_place = True
@@ -252,8 +253,8 @@ class Triangle:
 				x = math.cos(angle) * (v[0] - point[0]) - math.sin(angle) * (v[1] - point[1]) + point[0]
 				y = math.sin(angle) * (v[0] - point[0]) + math.cos(angle) * (v[1] - point[1]) + point[1]
 			else:
-				x = math.cos(angle) * (v[0] - point[0]) - math.sin(angle) * (point[1] - v[1]) + point[0]
-				y = -math.sin(angle) * (v[0] - point[0]) - math.cos(angle) * (point[1] - v[1]) + point[1]
+				x = math.cos(angle) * (v[0] - point[0]) + math.sin(angle) * (v[1] - point[1]) + point[0]
+				y = -math.sin(angle) * (v[0] - point[0]) + math.cos(angle) * (v[1] - point[1]) + point[1]
 			new_vertices.append((x, y))
 		self.vertices = self.arrange_vertices(new_vertices)
 		if not in_place:
@@ -298,9 +299,9 @@ class Polygon:
 
 	def get_center(self, vertices):
 		vertices = sorted(list(vertices), key=lambda x: (x[0]))
-		x = (vertices[0][0] + vertices[2][0]) / 2
+		x = (vertices[0][0] + vertices[-1][0]) / 2
 		vertices = sorted(list(vertices), key=lambda x: (x[1]))
-		y = (vertices[0][1] + vertices[2][1]) / 2
+		y = (vertices[0][1] + vertices[-1][1]) / 2
 		return (x, y)
 
 
@@ -411,6 +412,7 @@ class Polygon:
 	def rotate(self, dt, angle, point=None, clockwise=False):
 		self.unrender()
 		angle *= dt
+		in_place = False
 		if point == None:
 			point = self.center
 			in_place = True
@@ -420,8 +422,8 @@ class Polygon:
 				x = math.cos(angle) * (v[0] - point[0]) - math.sin(angle) * (v[1] - point[1]) + point[0]
 				y = math.sin(angle) * (v[0] - point[0]) + math.cos(angle) * (v[1] - point[1]) + point[1]
 			else:
-				x = math.cos(angle) * (v[0] - point[0]) - math.sin(angle) * (point[1] - v[1]) + point[0]
-				y = -math.sin(angle) * (v[0] - point[0]) - math.cos(angle) * (point[1] - v[1]) + point[1]
+				x = math.cos(angle) * (v[0] - point[0]) + math.sin(angle) * (v[1] - point[1]) + point[0]
+				y = -math.sin(angle) * (v[0] - point[0]) + math.cos(angle) * (v[1] - point[1]) + point[1]
 			new_vertices.append((x, y))
 		self.vertices = tuple(new_vertices)
 		self.edges = self.arrange_edges(self.vertices)
