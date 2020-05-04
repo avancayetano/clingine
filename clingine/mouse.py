@@ -4,20 +4,16 @@ class Mouse:
 	def __init__(self, window):
 		self.window = window
 		self.clicked = None
-		self.listener_running = False
 		curses.mousemask(curses.ALL_MOUSE_EVENTS)
 
 
 	def clear_events(self):
 		self.clicked = None
-		self.listener_running = False
-
 
 	def is_clicked(self):
-		return is_clicked != None
+		return self.clicked != None
 
 	def get_clicked(self):
-		self.listener_running = True
 		key = self.window.screen.getch()
 		if key == curses.KEY_MOUSE:
 			self.clicked = MouseEvent(*curses.getmouse())

@@ -66,8 +66,7 @@ class Window:
 		curses.endwin()
 
 	def update(self, fps):
-		if not self.mouse.listener_running:
-			self.screen.getch()
+		self.screen.getch()
 		for y in range(math.floor(self.height)):
 			for x in range(math.floor(self.width)):
 				if y != math.floor(self.height) - 1 and x != math.floor(self.width) - 1:

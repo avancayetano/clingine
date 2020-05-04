@@ -22,40 +22,46 @@ class Label:
 
 	def unrender(self):
 		if self.anchor == "center":
-			for idx in range(len(self.text)):
-				line = self.text[idx]
-				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2: math.floor(self.x) + math.ceil((len(line) + 1) / 2)] = [
-					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.color_pair])
-						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [self.window.char, self.window.color_pair])
-						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][0], # check if this point changed
-						self.window.char, self.window.color_pair] for i, c in enumerate(line)]
+			for y in range(len(self.text)):
+				line = self.text[y]
+				for x in range(len(line)):
+					if 0 <= math.floor(self.x) - (len(line) - 1) // 2 + x <= self.window.width - 2 and 0 <= math.floor(self.y) + y <= self.window.height - 2:
+						is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) - (len(line) - 1) // 2 + x][1:] == [self.window.char, self.window.color_pair])
+						if not is_changed:
+							is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) - (len(line) - 1) // 2 + x][0]
+						self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) - (len(line) - 1) // 2 + x] = [is_changed, self.window.char, self.window.color_pair]
+
 		elif self.anchor == "left":
-			for idx	in range((len(self.text))):
-				line = self.text[idx]
-				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x): math.floor(self.x) + len(line)] = [
-					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [self.window.char, self.window.color_pair])
-						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [self.window.char, self.window.color_pair])
-						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][0], # check if this point changed
-						self.window.char, self.window.color_pair] for i, c in enumerate(line)]
+			for y in range(len(self.text)):
+				line = self.text[y]
+				for x in range(len(line)):
+					if 0 <= math.floor(self.x) + x <= self.window.width - 2 and 0 <= math.floor(self.y) + y <= self.window.height - 2:
+						is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][1:] == [self.window.char, self.window.color_pair])
+						if not is_changed:
+							is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][0]
+						self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [is_changed, self.window.char, self.window.color_pair]
 
 
 	def render(self):
 		if self.anchor == "center":
-			for idx in range(len(self.text)):
-				line = self.text[idx]
-				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2: math.floor(self.x) + math.ceil((len(line) + 1) / 2)] = [
-					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [char, self.color_pair])
-						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][1:] == [char, self.color_pair])
-						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) - (len(line) - 1) // 2 + i][0],  # check if this point changed
-						char, self.color_pair] for i, char in enumerate(line)]
+			for y in range(len(self.text)):
+				line = self.text[y]
+				for x in range(len(line)):
+					if 0 <= math.floor(self.x) - (len(line) - 1) // 2 + x <= self.window.width - 2 and 0 <= math.floor(self.y) + y <= self.window.height - 2:
+						is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) - (len(line) - 1) // 2 + x][1:] == [line[x], self.color_pair])
+						if not is_changed:
+							is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) - (len(line) - 1) // 2 + x][0]
+						self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) - (len(line) - 1) // 2 + x] = [is_changed, line[x], self.color_pair]
+
 		elif self.anchor == "left":
-			for idx in range(len(self.text)):
-				line = self.text[idx]
-				self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x): math.floor(self.x) + len(line)] = [
-					[not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [char, self.color_pair])
-						if not(self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][1:] == [char, self.color_pair])
-						else self.window.screen_array[math.floor(self.y) + idx][math.floor(self.x) + i][0],  # check if this point changed
-						char, self.color_pair] for i, char in enumerate(line)]
+			for y in range(len(self.text)):
+				line = self.text[y]
+				for x in range(len(line)):
+					if 0 <= math.floor(self.x) + x <= self.window.width - 2 and 0 <= math.floor(self.y) + y <= self.window.height - 2:
+						is_changed = not(self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][1:] == [line[x], self.color_pair])
+						if not is_changed:
+							is_changed = self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x][0]
+						self.window.screen_array[math.floor(self.y) + y][math.floor(self.x) + x] = [is_changed, line[x], self.color_pair]
 
 	def destroy(self):
 		self.unrender()
