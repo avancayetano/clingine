@@ -183,15 +183,12 @@ class GameWindow(clingine.window.Window):
 
 
 			self.triangles = []
-			# for e in self.edges:
-			# 	print(e.sx, e.sy, e.ex, e.ey, sep="")
-			# chars = [".", "*", "/", "o"]
 			chars = ["."]
 			if len(self.visibility_points) > 1:
 				for i in range(len(self.visibility_points) - 1):
-					clingine.shapes.Triangle(self, vertices=((self.player.x, self.player.y), (self.visibility_points[i][1], self.visibility_points[i][2]), 
+					clingine.shapes.Polygon(self, vertices=((self.player.x, self.player.y), (self.visibility_points[i][1], self.visibility_points[i][2]), 
 						(self.visibility_points[i + 1][1],self.visibility_points[i + 1][2])), char=chars[i % len(chars)], fill=True, group=self.triangles)
-				clingine.shapes.Triangle(self, vertices=((self.player.x, self.player.y), (self.visibility_points[-1][1], self.visibility_points[-1][2]),
+				clingine.shapes.Polygon(self, vertices=((self.player.x, self.player.y), (self.visibility_points[-1][1], self.visibility_points[-1][2]),
 						(self.visibility_points[0][1], self.visibility_points[0][2])), char=chars[i % len(chars)], fill=True, group=self.triangles)
 				for t in self.triangles:
 					t.update(dt)
