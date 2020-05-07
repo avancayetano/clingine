@@ -146,9 +146,9 @@ class Triangle:
 
 
 	def render(self):
-		x1, y1 = self.vertices[0]
-		x2, y2 = self.vertices[1]
-		x3, y3 = self.vertices[2]
+		x1, y1 = math.floor(self.vertices[0][0]), math.floor(self.vertices[0][1])
+		x2, y2 = math.floor(self.vertices[1][0]), math.floor(self.vertices[1][1])
+		x3, y3 = math.floor(self.vertices[2][0]), math.floor(self.vertices[2][1])
 		if y1 == y2 and y2 == y3:
 			if self.fill:
 				self.draw_line(min(x1, x2, x3), max(x1, x2, x3), y1, self.char, self.color_pair)
@@ -238,9 +238,9 @@ class Triangle:
 
 
 	def unrender(self):
-		x1, y1 = self.vertices[0]
-		x2, y2 = self.vertices[1]
-		x3, y3 = self.vertices[2]
+		x1, y1 = math.floor(self.vertices[0][0]), math.floor(self.vertices[0][1])
+		x2, y2 = math.floor(self.vertices[1][0]), math.floor(self.vertices[1][1])
+		x3, y3 = math.floor(self.vertices[2][0]), math.floor(self.vertices[2][1])
 		if y1 == y2 and y2 == y3:
 			if self.fill:
 				self.draw_line(min(x1, x2, x3),  max(x1, x2, x3), y1, self.window.char, self.window.color_pair)

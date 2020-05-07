@@ -17,12 +17,12 @@ class GameWindow(clingine.window.Window):
 		# self.player = clingine.shapes.Rect(self, x=self.width//2, y=self.height//2, width=1, height=1, direction=(0, 0), speed=(40, 20), 
 			# char="o", color_pair=((255, 255, 255),(0, 0, 0)))
 
-		self.polygon = clingine.shapes.Polygon(self, vertices=((self.width // 2, 0), (1, self.height // 2), 
-			(self.width // 4, self.height - 2), (self.width - self.width // 4 - 1, self.height - 2), (self.width - 2, self.height // 2)), 
-			direction=(0, -1), speed=(30, 10), char="*", color_pair=((255, 255, 255), (0, 0, 0)))
+		# self.polygon = clingine.shapes.Polygon(self, vertices=((self.width // 2, 0), (1, self.height // 2), 
+		# 	(self.width // 4, self.height - 2), (self.width - self.width // 4 - 1, self.height - 2), (self.width - 2, self.height // 2)), 
+		# 	direction=(0, 0), speed=(10, 0), char="*", color_pair=((255, 255, 255), (0, 0, 0)))
 		# def __init__(self, window, center=(0, 0), radius=1, char="*", fill=True, color_pair=None, group=None):
-		# self.circle = clingine.shapes.Circle(self, center=(self.width // 2, 10), radius=5, direction=(1, 0), speed=(10, 0), fill=True, color_pair=((255, 255, 255), (0, 0, 0)))
-		# self.triangle = clingine.shapes.Triangle(self, fill=False, speed=(20, 10), direction=(0, -1), vertices=((self.width / 3, 2 * self.height / 3), (self.width / 2, self.height / 3), (2 * self.width / 3, 2 * self.height / 3)))
+		# self.circle = clingine.shapes.Circle(self, center=(self.width // 2, 10), radius=5, direction=(-1, 0), speed=(30, 15), fill=False, color_pair=((255, 255, 255), (0, 0, 0)))
+		self.triangle = clingine.shapes.Triangle(self, fill=True, speed=(30, 20), direction=(1, 0), vertices=((self.width / 2.7, 2.11312 * self.height / 3.123123), (self.width / 2.123123, self.height / 3), (2 * self.width / 3, 2 * self.height / 3)))
 		# def __init__(self, window, vertices=(), direction=(0, 0), speed=(0, 0), char="*", fill=True, color_pair=None, group=None):
 		# self.polygon = clingine.shapes.Polygon(self, vertices=((0, self.height - 2), (self.width // 5, 0), (self.width // 5 + 15, 0), 
 		# 	(2 * self.width // 5, self.height - 2), (3 * self.width // 5, 0), (4 * self.width // 5, self.height - 2)), 
@@ -60,13 +60,15 @@ class GameWindow(clingine.window.Window):
 			# 	rect.render()
 			# self.player.update(dt)
 			# self.player.render()
-			self.polygon.update(dt)
+			# self.polygon.update(dt)
 			# self.polygon.rotate(dt, math.pi / 4, clockwise=True)
-			self.polygon.render()
-			# self.triangle.update(dt)
+			# self.polygon.render()
+			self.triangle.update(dt)
 			# self.triangle.rotate(dt, angle)
 			# angle += math.pi / 4
-			# self.triangle.render()
+			self.triangle.render()
+			# self.circle.update(dt)
+			# self.circle.render()
 
 
 			self.update(self.fps)

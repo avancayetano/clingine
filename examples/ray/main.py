@@ -30,15 +30,23 @@ class Cell:
 class GameWindow(clingine.window.Window):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
+		self.rect_char = "#"
+		self.rect_color_pair = None
+		self.player_char = "X"
+		self.player_color_pair = None
+		self.triangles_char = "."
+		self.triangles_color_pair = None
+		self.triangles_num = clingine.label.Label(window=self, text=[""], x=15, y=self.height - 2, color_pair=((255, 255, 255), None))
+		self.fps_label = clingine.label.Label(window=self, text=[""], x=1, y=self.height - 2, color_pair=((255, 255, 255), None))
 		self.rects = [
-			clingine.shapes.Rect(self, x=1, y=1, width=self.width - 3, height=1, char="#"),
-			clingine.shapes.Rect(self, x=1, y=self.height - 3, width=self.width - 3, height=1, char="#"),
-			clingine.shapes.Rect(self, x=1, y=2, width=1, height=self.height - 5, char="#"),
-			clingine.shapes.Rect(self, x=self.width - 3, y=2, width=1, height=self.height - 5, char="#"),
+			clingine.shapes.Rect(self, x=1, y=1, width=self.width - 3, height=1, char=self.rect_char, color_pair=self.rect_color_pair),
+			clingine.shapes.Rect(self, x=1, y=self.height - 3, width=self.width - 3, height=1, char=self.rect_char, color_pair=self.rect_color_pair),
+			clingine.shapes.Rect(self, x=1, y=2, width=1, height=self.height - 5, char=self.rect_char, color_pair=self.rect_color_pair),
+			clingine.shapes.Rect(self, x=self.width - 3, y=2, width=1, height=self.height - 5, char=self.rect_char, color_pair=self.rect_color_pair),
 		] # walls
 
-		self.player = clingine.shapes.Rect(self, x=self.width//2, y=self.height//2, width=1, height=1, direction=(0, 0), speed=(40, 20), 
-			char="o", color_pair=((255, 255, 255),(0, 0, 0)))
+		self.player = clingine.shapes.Circle(self, center=(self.width//2, self.height//2), radius=1, direction=(0, 0), speed=(80, 40), 
+			char=self.player_char, color_pair=self.player_color_pair)
 
 		self.world = [[Cell() for j in range(self.width)] for i in range(self.height)]
 		for i in range(1, self.width - 2):
@@ -110,10 +118,11 @@ class GameWindow(clingine.window.Window):
 
 	def get_visibility_points(self, ox, oy, radius):
 		self.visibility_points = []
+		pts = []
 		for e1 in self.edges:
 			for i in range(2):
 				rdx = e1.sx - ox if i == 0 else e1.ex - ox
-				rdy = e1.sy if i == 0 else e1.ey - oy
+				rdy = e1.sy - oy if i == 0 else e1.ey - oy
 				base_ang = math.atan2(rdy, rdx)
 				for j in range(3):
 					if j == 0:
@@ -125,7 +134,7 @@ class GameWindow(clingine.window.Window):
 
 					rdx = radius * math.cos(ang)
 					rdy = radius * math.sin(ang)
-					min_t1 = 99
+					min_t1 = 99999
 					min_px = 0
 					min_py = 0
 					min_ang = 0
@@ -146,14 +155,15 @@ class GameWindow(clingine.window.Window):
 										min_py = oy + rdy * t1
 										min_ang = math.atan2(min_py - oy, min_px - ox)
 										valid = True
-					if valid:
+					if valid and (round(min_px, 3), round(min_py, 3)) not in pts:
+						pts.append((round(min_px, 3), round(min_py, 3)))
 						self.visibility_points.append((min_ang, min_px, min_py))
-
 		self.visibility_points.sort(key=lambda p: p[0])
 
 	def run(self):
 		while self.running:
 			dt = self.clock.get_dt()
+			fps = self.clock.get_fps()
 			clicked = self.mouse.get_clicked()
 			pressed = self.keyboard.get_pressed()
 			self.player.direction = (0, 0)
@@ -172,24 +182,23 @@ class GameWindow(clingine.window.Window):
 			self.reset()
 
 			if clicked and clicked.button == 1:
-				clingine.shapes.Rect(self, x=clicked.x, y=clicked.y, width=6, height=4, direction=(0, 0), speed=(0, 0), 
-					char="#", color_pair=((255, 255, 255),(0, 0, 0)), group=self.rects)
+				clingine.shapes.Rect(self, x=clicked.x, y=clicked.y, width=6, height=3, direction=(0, 0), speed=(0, 0), 
+					char=self.rect_char, color_pair=self.rect_color_pair, group=self.rects)
 				for y in range(4):
 					for x in range(6):
 						self.world[clicked.y + y][clicked.x + x].exist = True
 
 			self.convert_tile_to_polymap()
-			self.get_visibility_points(self.player.x, self.player.y, 1000)
-
-
+			self.get_visibility_points(self.player.center[0], self.player.center[1], 10000)
 			self.triangles = []
-			chars = ["."]
 			if len(self.visibility_points) > 1:
 				for i in range(len(self.visibility_points) - 1):
-					clingine.shapes.Polygon(self, vertices=((self.player.x, self.player.y), (self.visibility_points[i][1], self.visibility_points[i][2]), 
-						(self.visibility_points[i + 1][1],self.visibility_points[i + 1][2])), char=chars[i % len(chars)], fill=True, group=self.triangles)
-				clingine.shapes.Polygon(self, vertices=((self.player.x, self.player.y), (self.visibility_points[-1][1], self.visibility_points[-1][2]),
-						(self.visibility_points[0][1], self.visibility_points[0][2])), char=chars[i % len(chars)], fill=True, group=self.triangles)
+					clingine.shapes.Triangle(self, vertices=((self.player.center[0], self.player.center[1]), (self.visibility_points[i][1], self.visibility_points[i][2]), 
+						(self.visibility_points[i + 1][1],self.visibility_points[i + 1][2])), 
+						char=self.triangles_char, fill=True, group=self.triangles, color_pair=self.triangles_color_pair)
+				clingine.shapes.Triangle(self, vertices=((self.player.center[0], self.player.center[1]), (self.visibility_points[-1][1], self.visibility_points[-1][2]),
+					(self.visibility_points[0][1], self.visibility_points[0][2])), 
+					char=self.triangles_char, fill=True, group=self.triangles, color_pair=self.triangles_color_pair)
 				for t in self.triangles:
 					t.update(dt)
 					t.render()
@@ -198,6 +207,12 @@ class GameWindow(clingine.window.Window):
 				rect.render()
 			self.player.update(dt)
 			self.player.render()
+			self.fps_label.text = ["FPS: {}".format(fps)]
+			self.fps_label.update()
+			self.fps_label.render()
+			self.triangles_num.text = ["Triangles: {}".format(len(self.triangles))]
+			self.triangles_num.update()
+			self.triangles_num.render()
 			self.update(self.fps)
 		return
 
