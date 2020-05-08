@@ -36,8 +36,7 @@ class GameWindow(clingine.window.Window):
 		self.player_color_pair = None
 		self.triangles_char = "."
 		self.triangles_color_pair = None
-		self.triangles_num = clingine.label.Label(window=self, text=[""], x=15, y=self.height - 2, color_pair=((255, 255, 255), None))
-		self.fps_label = clingine.label.Label(window=self, text=[""], x=1, y=self.height - 2, color_pair=((255, 255, 255), None))
+		self.triangles_num = clingine.label.Label(window=self, text=[""], x=1, y=self.height - 2, color_pair=((255, 255, 255), None))
 		self.rects = [
 			clingine.shapes.Rect(self, x=1, y=1, width=self.width - 3, height=1, char=self.rect_char, color_pair=self.rect_color_pair),
 			clingine.shapes.Rect(self, x=1, y=self.height - 3, width=self.width - 3, height=1, char=self.rect_char, color_pair=self.rect_color_pair),
@@ -163,7 +162,6 @@ class GameWindow(clingine.window.Window):
 	def run(self):
 		while self.running:
 			dt = self.clock.get_dt()
-			fps = self.clock.get_fps()
 			clicked = self.mouse.get_clicked()
 			pressed = self.keyboard.get_pressed()
 			self.player.direction = (0, 0)
@@ -207,9 +205,7 @@ class GameWindow(clingine.window.Window):
 				rect.render()
 			self.player.update(dt)
 			self.player.render()
-			self.fps_label.text = ["FPS: {}".format(fps)]
-			self.fps_label.update()
-			self.fps_label.render()
+			
 			self.triangles_num.text = ["Triangles: {}".format(len(self.triangles))]
 			self.triangles_num.update()
 			self.triangles_num.render()

@@ -15,6 +15,3 @@ class Clock:
 
 	def delay(self, sec):
 		time.sleep(sec)
-
-	def get_fps(self):
-		return round(1 / self.get_dt(), 2)
