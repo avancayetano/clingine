@@ -41,6 +41,10 @@
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
+
+import sys, random
+sys.path.append(sys.path[0] + "/../..") # cause main.py is two directories away from the clingine package
+
 import clingine
 import math
 

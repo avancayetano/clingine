@@ -1,4 +1,7 @@
-import random
+import sys, random
+sys.path.append(sys.path[0] + "/../..") # cause main.py is two directories away from the clingine package
+
+
 import clingine
 from engine import player_obj, asteroid, button, star
 

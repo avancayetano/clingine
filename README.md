@@ -57,3 +57,17 @@ if __name__ == "__main__":
 
 ```
 See examples/spaceship for another example on how to use this code stucture...
+
+### TO DO:
+* More shapes
+* Image properties
+* Improve error handling and display
+* MapLoader
+* Surface objects
+* Mouse input (improve)
+* Tile mapping
+* Physics engine
+* New window
+* Audio
+* Docs!
+* Publish
