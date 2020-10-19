@@ -8,9 +8,11 @@ CLIngine is a Python game engine for developing command line interface (CLI) gam
 
 
 Just clone this repo and copy the clingine directory to your project, then import it.
-I don't know how to publish this package and I'm too lazy to learn. Make sure that your project is in the same directory as clingine.
+I don't know how to publish this package and I'm too lazy to learn. 
 
-Note: If you're using windows os, pip install requirements_windows.txt, otherwise pip install requirements.txt.
+*NOTE: Make sure that your project is in the same directory as clingine (the inner clingine).*
+
+Note: If you're using windows os, pip install -r requirements_windows.txt, otherwise pip install -r requirements.txt.
 
 
 ### HOW TO USE:
@@ -21,9 +23,13 @@ window = clingine.window.Window(width=130, height=50, fps=60)
 rect_obj = clingine.shapes.Rect(window, x=0, y=0, width=10, height=5, direction=(0, 0), speed=(100, 60), char="#", color_pair=((255, 255, 255),(0, 0, 0)))
 def game_loop():
 	while window.running:
-		dt = self.get_dt()
+		dt = window.clock.get_dt()
 		pressed_keys = window.keyboard.get_pressed()
 		# your game logic here...
+
+		if "q" in pressed_keys:
+			window.exit()
+
 		rect_obj.update(dt)
 		rect_obj.render()
 
@@ -45,6 +51,9 @@ class GameWindow(clingine.window.Window):
 		while self.running:
 			dt = self.clock.get_dt()
 			pressed_keys = self.keyboard.get_pressed()
+
+			if "q" in pressed_keys:
+				self.exit()
 			# game logic here
 			self.rect_obj.update(dt)
 			self.rect_obj.render()

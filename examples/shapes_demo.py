@@ -1,3 +1,6 @@
+import sys
+sys.path.append(sys.path[0] + "/..")
+
 import clingine
 
 class GameWindow(clingine.window.Window):
