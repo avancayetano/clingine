@@ -11,7 +11,7 @@ CLIngine is a Python game engine for developing command line interface (CLI) gam
 
 
 Just clone this repo and copy the clingine directory to your project, then import it.
-I don't know how to publish this package and I'm too lazy to learn. 
+I don't know how to publish this package and I'm too lazy to learn... 
 
 *NOTE: Make sure that your project is in the same directory as clingine (the inner clingine).*
 
