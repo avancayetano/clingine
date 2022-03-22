@@ -1,6 +1,3 @@
-# [DISCONTINUED]. REASON: i give up
-
-
 # clingine
 CLIngine is a Python game engine for developing command line interface (CLI) games.
 
