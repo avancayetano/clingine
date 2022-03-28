@@ -8,11 +8,10 @@ CLIngine is a Python game engine for developing command line interface (CLI) gam
 
 
 Just clone this repo and copy the clingine directory to your project, then import it.
-I don't know how to publish this package and I'm too lazy to learn... 
 
 *NOTE: Make sure that your project is in the same directory as clingine (the inner clingine).*
 
-Note: If you're using windows os, pip install -r requirements_windows.txt, otherwise pip install -r requirements.txt.
+Note: If you're using Windows OS, pip install -r requirements_windows.txt, otherwise pip install -r requirements.txt. Note also that I have not tested this software extensively in the Windows OS.
 
 
 ### HOW TO USE:
