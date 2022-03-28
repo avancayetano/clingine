@@ -1,4 +1,4 @@
-
+__pycache__/
 *.egg
 *.egg-info/
 *.eggs/
@@ -6,6 +6,7 @@
 *.sublime-*
 *.swo
 *.swp
+
 
 build/*
 dist/*

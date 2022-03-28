@@ -2,16 +2,19 @@
 CLIngine is a Python game engine for developing command line interface (CLI) games.
 
 # Screenshots:
-![gameplay](https://github.com/avancayetano/clingine/blob/master/screenshots/gameplay.png "gameplay")
+![menu](https://github.com/avancayetano/clingine/blob/master/screenshots/clingine-menu.png "menu")
+![gameplay](https://github.com/avancayetano/clingine/blob/master/screenshots/clingine-gameplay.png "gameplay")
 
-![sample](https://github.com/avancayetano/clingine/blob/master/screenshots/sample.gif "sample")
+![demo](https://github.com/avancayetano/clingine/blob/master/screenshots/clingine-demo.gif "demo")
 
 
 Just clone this repo and copy the clingine directory to your project, then import it.
 
 *NOTE: Make sure that your project is in the same directory as clingine (the inner clingine).*
 
-Note: If you're using Windows OS, pip install -r requirements_windows.txt, otherwise pip install -r requirements.txt. Note also that I have not tested this software extensively in the Windows OS.
+Note: If you're using Windows OS, pip install -r requirements_windows.txt, otherwise pip install -r requirements.txt. 
+
+### *Tested on Windows OS command prompt.*
 
 
 ### HOW TO USE:

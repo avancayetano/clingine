@@ -4,7 +4,7 @@ from . import util, keyboard, clock, mouse
 class Window:
 	def __init__(self, width=80, height=22, char=" ", fps=60):
 		if sys.platform == "win32" or sys.platform == "cygwin":
-			os.system("mode {},{}".format(width, height))
+			os.system("mode {}, {}".format(width, height))
 		else:
 			sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=height, cols=width)) # changes terminal dimensions
 			print() # this print is necessary; we need to print something to update the terminal dimensions after executing the line above
